@@ -36,7 +36,8 @@ module.exports = {
 		'@typescript-eslint',
 		'eslint-plugin-prefer-arrow',
 		'jsx-a11y',
-		'prettier'
+		'prettier',
+		'drizzle'
 	],
 	rules: {
 		// Turn off prettier related
