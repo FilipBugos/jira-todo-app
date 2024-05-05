@@ -9,6 +9,7 @@ export const user = sqliteTable('User', {
 
 export const project = sqliteTable('Project', {
 	ID: integer('id').primaryKey(),
+	Name: text("name").notNull(),
 	CreatedTime: integer("start-date", {mode: "timestamp"}).default(sql`(CURRENT_TIMESTAMP)`),
 	CreatedBy: integer("created-by").references(() => user.ID).notNull(),
 });
