@@ -1,31 +1,40 @@
-import Link from "next/link";
+import { getAllUserProjects } from "@/actions/projectActions";
+import CreateIssueDialog from "../create-issue-dialog";
+import { getUser } from "@/actions/userActions";
+import { eq } from "drizzle-orm";
+import { sprint, user, userProject } from "../../../db/schema";
+import { getSprint, getSprintsOfUser } from "@/actions/sprintActions";
+import { Link } from "lucide-react";
 import { PageLink } from "./page-link";
 
-// TODO: to be completed
-export function getNavBarItems() {
-    return [
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" },
-      { Name: "Name", Url: "Open" }
-    ];
+export default async function TopNavBar() {
+  
+  const loggedInUserId = 1;
+  const loggedInUser = (await getUser([eq(user.ID, loggedInUserId)])).at(0);
+  if (!loggedInUser) {
+    <div>Error</div>
   }
 
-export default async function TopNavBar() {
+  const sprints = await getSprintsOfUser(loggedInUser ? [eq(user.ID, loggedInUser?.ID)] : undefined);
   return (
     
     <>
-      <div className="bg-slate-300 flex flex-row gap-2" >
-        {getNavBarItems().map(i => {
-            return( 
-            <div className="m-3">
-                <Link className="hover:bg-slate-400 hover:rounded-md p-2" href={i.Url}>{i.Name}</Link>
-            </div>
-            );
-        })}
+      <div className="bg-slate-300 flex flex-row gap-2 mb-5" >
+        <div className="m-3">
+                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="/">Overview</PageLink>
+        </div>
+        <div className="m-3">
+            <CreateIssueDialog projects={await getAllUserProjects(loggedInUser ? [eq(userProject.User, loggedInUser?.ID)] : undefined)}
+             trigger={<button className="Button violet">Edit profile</button>}
+             sprints={sprints.map(s => s.sprint)}
+             />
+        </div>
+        <div className="m-3">
+                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="..." >Create project</PageLink>
+        </div>
+        <div className="m-3">
+                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="...">Profile</PageLink>
+        </div>
       </div>
     </>
   );
