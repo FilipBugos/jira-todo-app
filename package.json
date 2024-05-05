@@ -23,7 +23,8 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-select": "^5.8.0",
-    "typescript-eslint": "^7.7.1"
+    "typescript-eslint": "^7.7.1",
+    "react-hook-form": "^7.51.0"
   },
   "devDependencies": {
     "@types/node": "^20",
