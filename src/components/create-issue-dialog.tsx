@@ -1,12 +1,10 @@
 'use client';
 
-import { SelectProject, SelectSprint, SelectUser, SelectUserProject, sprint } from '../../db/schema';
-import Select, { MultiValue, ActionMeta, SingleValue } from "react-select";
-import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { issue, SelectSprint } from '../../db/schema';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SelectOption } from './issue-filters';
 import { ProjectsWithUsers } from '@/actions/projectActions';
 import { getLabels, getStatuses } from '@/lib/utils';
 import { createIssue } from '@/actions/issueActions';
@@ -15,10 +13,10 @@ import {
 	DialogClose,
 	DialogContent,
 	DialogFooter,
-	DialogHeader,
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
+import { isNull } from 'drizzle-orm';
 
 type CreateIssueDialogType = {
     projects: ProjectsWithUsers[],
@@ -48,21 +46,22 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
 	});
 
     async function submit() {
-        console.log(form.getValues());
-        const sprint = form.getValues().sprint;
-        const assignee = form.getValues().assignee;
-        const issue = {
-            CreatedBy: 1,
-            ...(assignee && { AssignedTo: assignee }),
-            Description: form.getValues().description ?? null,
-            Summary: form.getValues().summary,
-            Estimation: form.getValues().storyPoints,
-            CreatedTime: new Date(),
-            Label: form.getValues().label,
-            ...(sprint && { SprintID: sprint }),
-            Status: getStatuses().at(0)?.Name,
-        }
-        await createIssue(issue);
+        form.handleSubmit(async issue => {
+                console.log("success");            
+                const issueEntity = {
+                    CreatedBy: 1,
+                    Project: issue.project,
+                    Description: issue.description ?? null,
+                    Summary: issue.summary,
+                    Estimation: issue.storyPoints,
+                    CreatedTime: new Date(),
+                    Label: issue.label,
+                    Status: getStatuses().at(0)?.Name,
+                    ...(issue.sprint && {SprintID: issue.sprint}),
+                    ...(issue.assignee && {AssignedTo: issue.assignee}),   
+                }
+                await createIssue(issueEntity);
+            }, error => console.log(error)).call();
     }
 
     return (
