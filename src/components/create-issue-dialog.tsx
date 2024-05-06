@@ -9,7 +9,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SelectOption } from './issue-filters';
 import { ProjectsWithUsers } from '@/actions/projectActions';
-import { getLabels } from '@/lib/utils';
+import { getLabels, getStatuses } from '@/lib/utils';
+import { createIssue } from '@/actions/issueActions';
 
 type CreateIssueDialogType = {
     projects: ProjectsWithUsers[],
@@ -19,12 +20,12 @@ type CreateIssueDialogType = {
 
 const formSchema = z
 	.object({
-        project: z.string().min(1),
+        project: z.number().min(1),
 		summary: z.string().min(3),
 		description: z.string().optional(),
-        sprint: z.string().min(1),
-        label: z.string().min(1),
-        assignee: z.string().min(1),
+        sprint: z.number().min(1),
+        label: z.number().min(1),
+        assignee: z.number(),
 		storyPoints: z.number().lt(100),
 	});
 
@@ -38,8 +39,22 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
 		resolver: zodResolver(formSchema)
 	});
 
-    const submit = () => {
+    async function submit() {
         console.log(form.getValues());
+        const sprint = form.getValues().sprint;
+        const assignee = form.getValues().assignee;
+        const issue = {
+            CreatedBy: 1,
+            ...(assignee && { AssignedTo: assignee }),
+            Description: form.getValues().description ?? null,
+            Summary: form.getValues().summary,
+            Estimation: form.getValues().storyPoints,
+            CreatedTime: new Date(),
+            Label: form.getValues().label,
+            ...(sprint && { SprintID: sprint }),
+            Status: getStatuses().at(0)?.Name,
+        }
+        await createIssue(issue);
     }
 
     return (
@@ -71,7 +86,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             </div>
                             <div className="grid grid-cols-2">
                                 <label>Story points</label>
-                                <input {...form.register("storyPoints")} className='rounded-md' type='number'></input>
+                                <input inputMode='decimal' {...form.register("storyPoints")} className='rounded-md' type='number'></input>
                             </div>
                             <div className="grid grid-cols-2">
                                 <label>Sprint</label>
@@ -81,7 +96,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             </div>
                             <div className="grid grid-cols-2">
                                 <label>Label</label>
-                                <select multiple {...form.register('label')}>
+                                <select {...form.register('label')}>
                                     {getLabels().map(l => <option key={l.ID} value={l.ID}>{l.Name}</option>)}
                                 </select>
                             </div>
