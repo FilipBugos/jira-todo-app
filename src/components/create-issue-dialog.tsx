@@ -60,10 +60,13 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                     ...(issue.assignee && {AssignedTo: issue.assignee}),   
                 }
                 await createIssue(issueEntity);
+                document.getElementById('closeDialogBtn')?.click();
                 form.reset();
-            }, error => console.log(error)).call();
+            }, error => {
+                console.log(error);
+            }).call()
+    };
         
-    }
 
     return (
         <FormProvider {...form}>
@@ -123,11 +126,9 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             </div>
                             <DialogFooter>
                             <div className='flex flex-row-reverse gap-10'>
-                                <DialogClose asChild>
                                     <button className="flex-end" onClick={() => submit()}>Save changes</button>
-                                </DialogClose>
                                 <DialogClose asChild>
-                                    <button className="flex-end" aria-label="Close">
+                                    <button id="closeDialogBtn" className="flex-end" aria-label="Close">
                                         Close
                                     </button>
                                 </DialogClose>
