@@ -28,13 +28,13 @@ type CreateIssueDialogType = {
 
 const formSchema = z
 	.object({
-        project: z.number().min(1),
-		summary: z.string().min(3),
+        project: z.string().min(1, { message: "Project must be selected" }).transform(Number),
+		summary: z.string().min(3, { message: "Issue has to have summary" }),
 		description: z.string().optional(),
-        sprint: z.number().min(1),
-        label: z.number().min(1),
-        assignee: z.number(),
-		storyPoints: z.number().lt(100),
+        sprint: z.string().optional().transform(Number),
+        label: z.string().optional().transform(Number),
+        assignee: z.string().optional().transform(Number),
+		storyPoints: z.string().optional().transform(Number),
 	});
 
 export type CreateIssueSchema = z.infer<typeof formSchema>;
