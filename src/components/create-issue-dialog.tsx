@@ -16,8 +16,10 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { FormInput } from './form-fields/form-input';
 import { toast } from 'sonner';
+import { FormLabelField } from './form-fields/form-label-field';
+import { FormSelectField } from './form-fields/form-select';
+import { LabelSelectField } from './form-fields/label-select-field';
 
 type CreateIssueDialogType = {
     projects: ProjectsWithUsers[],
@@ -45,8 +47,6 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
     const form = useForm<CreateIssueSchema>({
 		resolver: zodResolver(formSchema)
 	});
-
-    const errors = form.formState.errors;
 
     const reset = () => {
         form.resetField('project');
@@ -102,49 +102,22 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                                 className="DialogContent bg-slate-300 w-full">
                             <DialogTitle className="DialogTitle text-xl mb-5">Create Issue</DialogTitle>
                             <div className='flex flex-col gap-4 mt-2'>
-                                <div className="grid grid-cols-2">
-                                    <label>Project</label>
-                                    <div>
-                                        <select {...form.register('project')} onChange={(selectedOption) => { 
-                                            const selectedProject = Number(selectedOption.target.value);
-                                            setSelectedProject(selectedProject);
-                                            setSprintsToSelect(sprints.filter(s => s.Project === selectedProject))
-                                        }} className="min-w-[230px] flex-grow p-2 rounded-md">
-                                            <option className="min-w-[230px] flex-grow p-2 rounded-md" selected></option>
-                                            {projects.map(p => <option key={p.project?.ID} value={p.project?.ID}>{p.project?.Name}</option>)}
-                                        </select>
-                                        {errors.project && <span className='text-red-600 text-xs'>{errors.project.message}</span>}
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2">
-                                    <label>Summary</label>
-                                    <FormInput {...form.register("summary")} className="min-w-[180px] flex-grow p-2 rounded-md" />
-                                </div>
-                                <div className="grid grid-cols-2">
-                                    <label>Story points</label>
-                                    <FormInput {...form.register("storyPoints")} type='number' className="min-w-[180px] flex-grow p-2 rounded-md" />
-                                </div>
-                                <div className="grid grid-cols-2">
-                                    <label>Sprint</label>
-                                    <select {...form.register('sprint')} className="min-w-[180px] flex-grow p-2 rounded-md">
-                                        <option selected></option>
-                                        {sprintsToSelect.map(s => <option key={s.ID} value={s.ID}>{s.Name}</option>)}
-                                    </select>
-                                </div>
-                                <div className="grid grid-cols-2">
-                                    <label>Label</label>
-                                    <select {...form.register('label')} className="min-w-[180px] flex-grow p-2 rounded-md">
-                                        <option selected></option>
-                                        {getLabels().map(l => <option key={l.ID} value={l.ID}>{l.Name}</option>)}
-                                    </select>
-                                </div>
-                                <div className="grid grid-cols-2">
-                                    <label>Assignee</label>
-                                    <select {...form.register('assignee')} className="min-w-[180px] flex-grow p-2 rounded-md">
-                                        <option selected></option>
-                                        {projects.filter(p => p.project?.ID == selectedProject).map(p => p.user ? <option value={p.user?.ID}>{p.user?.Name}</option> : <></>)}
-                                    </select>
-                                </div>
+                                <LabelSelectField 
+                                    label="Project" 
+                                    name='project'
+                                    data={projects.map(p => { return {key: p.project?.ID, value: p.project?.Name}})}
+                                    className="min-w-[230px] flex-grow p-2 rounded-md"
+                                    onChange={(selectedOption) => { 
+                                        const selectedProject = Number(selectedOption.target.value);
+                                        setSelectedProject(selectedProject);
+                                        setSprintsToSelect(sprints.filter(s => s.Project === selectedProject))
+                                    }} />
+                                <FormLabelField label="Summary" name='summary' type='text' />
+                                <FormLabelField label="Story points" name='storyPoints' type='number' />
+                                
+                                <LabelSelectField label="Sprint" name='sprint' data={sprintsToSelect.map(s => { return {key: s.ID, value: s.Name}})} className="min-w-[230px] flex-grow p-2 rounded-md" />
+                                <LabelSelectField label="Label" name='label' data={getLabels().map(l => { return {key: l.ID, value: l.Name}})} className="min-w-[230px] flex-grow p-2 rounded-md" />
+                                <LabelSelectField label="Assignee" name='assignee' data={projects.filter(p => p.project?.ID == selectedProject && p.user).map(p => { return {key: p.user?.ID, value: p.user?.Name}} )}  className="min-w-[230px] flex-grow p-2 rounded-md" />
                                 <div className="grid grid-cols-2 grid-rows-5">
                                     <label>Description</label>
                                     <textarea {...form.register("description")} className="min-w-[180px] flex-grow p-2 rounded-md row-span-5" placeholder='Enter description...'></textarea>
