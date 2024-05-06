@@ -1,7 +1,7 @@
 'use client';
 
-import { issue, SelectSprint } from '../../db/schema';
-import { FieldErrors, FormProvider, useForm } from 'react-hook-form';
+import { SelectSprint } from '../../db/schema';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +16,8 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
+import { FormInput } from './form-fields/form-input';
+import { toast } from 'sonner';
 
 type CreateIssueDialogType = {
     projects: ProjectsWithUsers[],
@@ -25,13 +27,13 @@ type CreateIssueDialogType = {
 
 const formSchema = z
 	.object({
-        project: z.string().min(1, { message: "Project must be selected" }).transform(Number),
-		summary: z.string().min(3, { message: "Issue has to contain summary." }),
-		description: z.string().optional(),
-        sprint: z.string().optional().transform(Number),
-        label: z.string().optional().transform(Number),
-        assignee: z.string().optional().transform(Number),
-		storyPoints: z.string().optional().transform(Number),
+        project: z.string().min(1, { message: "Project must be selected" }).transform(Number).default(""),
+		summary: z.string().min(3, { message: "Issue has to contain summary." }).default(""),
+		description: z.string().optional().default(""),
+        sprint: z.string().optional().transform(Number).default(""),
+        label: z.string().optional().transform(Number).default(""),
+        assignee: z.string().optional().transform(Number).default(""),
+		storyPoints: z.string().optional().transform(Number).default(""),
 	});
 
 export type CreateIssueSchema = z.infer<typeof formSchema>;
@@ -46,6 +48,15 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
 
     const errors = form.formState.errors;
 
+    const reset = () => {
+        form.resetField('project');
+        form.resetField('summary');
+        form.resetField('description');
+        form.resetField('sprint');
+        form.resetField('label');
+        form.resetField('assignee');
+        form.resetField('storyPoints');
+    }
     async function submit() {
         form.handleSubmit(async issue => {
                 const issueEntity = {
@@ -60,10 +71,20 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                     ...(issue.sprint && {SprintID: issue.sprint}),
                     ...(issue.assignee && {AssignedTo: issue.assignee}),   
                 }
-                await createIssue(issueEntity);
-                document.getElementById('closeDialogBtn')?.click();
-                form.reset();
-            }, () => {}).call()
+
+                try {
+                    await createIssue(issueEntity);
+                    toast.success('Issue was successfully created');
+                    reset();
+                    document.getElementById('closeDialogBtn')?.click();
+                } catch(e) {
+                    if (e instanceof Error) {
+                        toast.error(e.message);
+                    }
+                }
+            }, () => {
+                toast.error("Validation error, correct non-valid fields.");
+            }).call()
     };
         
     // TODO: the dialog is very small
@@ -97,14 +118,11 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                                 </div>
                                 <div className="grid grid-cols-2">
                                     <label>Summary</label>
-                                    <div>
-                                        <input {...form.register("summary")} className="min-w-[180px] flex-grow p-2 rounded-md"></input>
-                                        {errors.summary && <span className='text-red-600 text-xs'>{errors.summary.message}</span>}
-                                    </div>
+                                    <FormInput {...form.register("summary")} className="min-w-[180px] flex-grow p-2 rounded-md" />
                                 </div>
                                 <div className="grid grid-cols-2">
                                     <label>Story points</label>
-                                    <input inputMode='decimal' {...form.register("storyPoints")} className="min-w-[180px] flex-grow p-2 rounded-md" type='number'></input>
+                                    <FormInput {...form.register("storyPoints")} type='number' className="min-w-[180px] flex-grow p-2 rounded-md" />
                                 </div>
                                 <div className="grid grid-cols-2">
                                     <label>Sprint</label>
@@ -137,8 +155,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                                     <button className="flex-end" onClick={() => submit()}>Save changes</button>
                                 <DialogClose asChild>
                                     <button id="closeDialogBtn" onClick={() => {
-                                        // TODO: reliaze why is this not working
-                                        form.reset()
+                                        reset();
                                     }} className="flex-end">
                                         Close
                                     </button>
