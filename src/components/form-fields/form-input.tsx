@@ -6,10 +6,6 @@ type FormInputProps = HTMLProps<HTMLInputElement> & {
 	name: string;
 };
 
-/**
- * It is recommended to create this reusable input component
- * and use it in each forms.
- */
 export const FormInput = ({
     name,
     className,
