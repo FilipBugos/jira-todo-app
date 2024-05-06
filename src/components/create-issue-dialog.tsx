@@ -1,7 +1,7 @@
 'use client';
 
 import { issue, SelectSprint } from '../../db/schema';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldErrors, FormProvider, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,7 +16,6 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { isNull } from 'drizzle-orm';
 
 type CreateIssueDialogType = {
     projects: ProjectsWithUsers[],
@@ -27,7 +26,7 @@ type CreateIssueDialogType = {
 const formSchema = z
 	.object({
         project: z.string().min(1, { message: "Project must be selected" }).transform(Number),
-		summary: z.string().min(3, { message: "Issue has to have summary" }),
+		summary: z.string().min(3, { message: "Issue has to contain summary." }),
 		description: z.string().optional(),
         sprint: z.string().optional().transform(Number),
         label: z.string().optional().transform(Number),
@@ -44,6 +43,8 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
     const form = useForm<CreateIssueSchema>({
 		resolver: zodResolver(formSchema)
 	});
+
+    const errors = form.formState.errors;
 
     async function submit() {
         form.handleSubmit(async issue => {
@@ -62,9 +63,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                 await createIssue(issueEntity);
                 document.getElementById('closeDialogBtn')?.click();
                 form.reset();
-            }, error => {
-                console.log(error);
-            }).call()
+            }, () => {}).call()
     };
         
 
@@ -81,18 +80,24 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             <div className='flex flex-col gap-4 mt-2'>
                                 <div className="grid grid-cols-2">
                                     <label>Project</label>
-                                    <select {...form.register('project')} onChange={(selectedOption) => { 
-                                        const selectedProject = Number(selectedOption.target.value);
-                                        setSelectedProject(selectedProject);
-                                        setSprintsToSelect(sprints.filter(s => s.Project === selectedProject))
-                                    }} className="min-w-[180px] flex-grow p-2 rounded-md">
-                                        <option selected></option>
-                                        {projects.map(p => <option key={p.project?.ID} value={p.project?.ID}>{p.project?.Name}</option>)}
-                                    </select>
+                                    <div>
+                                        <select {...form.register('project')} onChange={(selectedOption) => { 
+                                            const selectedProject = Number(selectedOption.target.value);
+                                            setSelectedProject(selectedProject);
+                                            setSprintsToSelect(sprints.filter(s => s.Project === selectedProject))
+                                        }} className="min-w-[230px] flex-grow p-2 rounded-md">
+                                            <option className="min-w-[230px] flex-grow p-2 rounded-md" selected></option>
+                                            {projects.map(p => <option key={p.project?.ID} value={p.project?.ID}>{p.project?.Name}</option>)}
+                                        </select>
+                                        {errors.project && <span className='text-red-600 text-xs'>{errors.project.message}</span>}
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2">
                                     <label>Summary</label>
-                                    <input {...form.register("summary")} className="min-w-[180px] flex-grow p-2 rounded-md"></input>
+                                    <div>
+                                        <input {...form.register("summary")} className="min-w-[180px] flex-grow p-2 rounded-md"></input>
+                                        {errors.summary && <span className='text-red-600 text-xs'>{errors.summary.message}</span>}
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-2">
                                     <label>Story points</label>
@@ -128,7 +133,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             <div className='flex flex-row-reverse gap-10'>
                                     <button className="flex-end" onClick={() => submit()}>Save changes</button>
                                 <DialogClose asChild>
-                                    <button id="closeDialogBtn" className="flex-end" aria-label="Close">
+                                    <button id="closeDialogBtn" onClick={() => form.reset()} className="flex-end" aria-label="Close">
                                         Close
                                     </button>
                                 </DialogClose>
