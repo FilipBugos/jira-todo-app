@@ -66,7 +66,7 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
             }, () => {}).call()
     };
         
-
+    // TODO: the dialog is very small
     return (
         <FormProvider {...form}>
             <form>
@@ -75,7 +75,10 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                         <DialogTrigger asChild>
                             {trigger}
                         </DialogTrigger>
-                        <DialogContent className="DialogContent bg-slate-300 w-full">
+                        <DialogContent onInteractOutside={(e) => {
+                                        e.preventDefault();
+                                        }} 
+                                className="DialogContent bg-slate-300 w-full">
                             <DialogTitle className="DialogTitle text-xl mb-5">Create Issue</DialogTitle>
                             <div className='flex flex-col gap-4 mt-2'>
                                 <div className="grid grid-cols-2">
@@ -133,7 +136,10 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                             <div className='flex flex-row-reverse gap-10'>
                                     <button className="flex-end" onClick={() => submit()}>Save changes</button>
                                 <DialogClose asChild>
-                                    <button id="closeDialogBtn" onClick={() => form.reset()} className="flex-end" aria-label="Close">
+                                    <button id="closeDialogBtn" onClick={() => {
+                                        // TODO: reliaze why is this not working
+                                        form.reset()
+                                    }} className="flex-end">
                                         Close
                                     </button>
                                 </DialogClose>
