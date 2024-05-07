@@ -10,6 +10,7 @@ export const user = sqliteTable('User', {
 export const project = sqliteTable('Project', {
 	ID: integer('id').primaryKey(),
 	Name: text("name").notNull(),
+	Description: text("description"),
 	CreatedTime: integer("start-date", {mode: "timestamp"}).default(sql`(CURRENT_TIMESTAMP)`),
 	CreatedBy: integer("created-by").references(() => user.ID).notNull(),
 });
@@ -21,9 +22,6 @@ export const sprint = sqliteTable('Sprint', {
 	EndDate: integer("start-date", {mode: "timestamp"}),
 	Project: integer("project-id").references(() => project.ID).notNull(),
 });
-
-
-
 
 export const userProject = sqliteTable('UserProject', {
 	ID: integer('id').primaryKey(),
