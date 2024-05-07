@@ -18,6 +18,11 @@ import { FormInput } from './form-fields/form-input';
 import { useState } from 'react';
 import { SelectUser } from '../../db/schema';
 import { AddParticipantToProject, ParticipantsType } from './add-participant-to-project-form';
+import { Description } from '@radix-ui/react-dialog';
+import { createProjectWithUserProject, ProjectWithUserProjecs } from '@/actions/projectActions';
+import { revalidatePath, revalidateTag } from 'next/cache';
+import router from 'next/router';
+import { Check, X } from 'lucide-react';
 
 
 type CreateProjectDialogType = {
@@ -35,6 +40,7 @@ export type CreateProjectSchema = z.infer<typeof formSchema>;
 
 const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
     const [ participants, setParticipants ] = useState<ParticipantsType[]>([]);
+    const [ userEntities, setUsers] = useState<SelectUser[]>(users);
 
     const form = useForm<CreateProjectSchema>({
 		resolver: zodResolver(formSchema)
@@ -43,39 +49,53 @@ const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
     const reset = () => {
         form.resetField('name');
         form.resetField('description');
+        setParticipants([]);
+        setUsers(users);
     }
-    // async function submit() {
-    //     form.handleSubmit(async issue => {
-    //             const issueEntity = {
-    //                 CreatedBy: 1,
-    //                 Project: issue.project,
-    //                 Description: issue.description ?? null,
-    //                 Summary: issue.summary,
-    //                 Estimation: issue.storyPoints,
-    //                 CreatedTime: new Date(),
-    //                 Label: issue.label,
-    //                 Status: getStatuses().at(0)?.Name,
-    //                 ...(issue.sprint && {SprintID: issue.sprint}),
-    //                 ...(issue.assignee && {AssignedTo: issue.assignee}),   
-    //             }
 
-    //             try {
-    //                 await createIssue(issueEntity);
-    //                 toast.success('Issue was successfully created');
-    //                 reset();
-    //                 document.getElementById('closeDialogBtn')?.click();
-    //             } catch(e) {
-    //                 if (e instanceof Error) {
-    //                     toast.error(e.message);
-    //                 }
-    //             }
-    //         }, () => {
-    //             toast.error("Validation error, correct non-valid fields.");
-    //         }).call()
-    // };
+    async function submit() {
+        form.handleSubmit(async userProject => {
+                const entity: ProjectWithUserProjecs = {
+                    // set current logged in user
+                    Project: {
+                        CreatedBy: 1,
+                        CreatedTime: new Date(),
+                        Name: userProject.name,
+                        Description: userProject.description,
+                    },
+                    UserProjectEntities: participants.map(p => {
+                        return {
+                            User: p.user.id,
+                            Role: p.role
+                        }
+                    }),   
+                }
+
+                try {
+                    await createProjectWithUserProject(entity);
+                    //revalidateTag();
+                    toast.success('Project was successfully created');
+                    reset();
+                    document.getElementById('closeDialogBtn')?.click();
+                } catch(e) {
+                    if (e instanceof Error) {
+                        toast.error(e.message);
+                    }
+                }
+            }, () => {
+                toast.error("Validation error, correct non-valid fields.");
+            }).call()
+    };
+
     const selectUser = (user: ParticipantsType) => {
         setParticipants([...participants, user]);
-        console.log('we are here')
+        setUsers(userEntities.filter(u => u.ID !== user.user.id))
+    }
+
+    const deleteUser = (user: number) => {
+        setParticipants([...participants.filter(u => u.user.id !== user)]);
+        const userEntity = users.find(u => u.ID === user);
+        userEntity ? setUsers([...userEntities, userEntity ]) : undefined;
     }
 
     // TODO: the dialog is very small
@@ -100,13 +120,14 @@ const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
                                 {participants.map(p => {
                                     return (
                                         <div key={p.user.id} className="grid grid-cols-3 gap-10">
-                                            <FormInput disabled name='ParticipantID' value={p.user.name} className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />
-                                            <FormInput disabled name='ParticipantID' value={p.role} className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />    
+                                            <FormInput key={p.user.id} disabled name='ParticipantID' value={p.user.name} className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />
+                                            <FormInput key={p.user.id} disabled name='ParticipantID' value={p.role} className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />
+                                            <button onClick={() => { deleteUser(p.user.id) }} className='max-w-[30px]'><X /></button>
                                         </div>
                                     );
                                 })}
                                 
-                                <AddParticipantToProject data={users.map(u => {return {key: u.ID, value: u.Name}})} setData={selectUser}/>
+                                <AddParticipantToProject data={userEntities.map(u => {return {key: u.ID, value: u.Name}})} setData={selectUser}/>
   
                                 
                                 <div className="grid grid-cols-2 grid-rows-5 mt-5">
@@ -116,7 +137,7 @@ const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
                             </div>
                             <DialogFooter>
                             <div className='flex flex-row-reverse gap-10'>
-                                    <button className="flex-end" onClick={() => console.log('submit')}>Save changes</button>
+                                    <button className="flex-end" onClick={() => submit()}>Save changes</button>
                                 <DialogClose asChild>
                                     <button id="closeDialogBtn" onClick={() => {
                                         reset();

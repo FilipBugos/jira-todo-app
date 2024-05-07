@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { FormInput } from './form-fields/form-input';
+import { Check } from 'lucide-react';
 
 export type ParticipantsType = {
     role: string;
@@ -68,7 +69,7 @@ export const AddParticipantToProject = ({
                     name='user'
                     className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />
                 <FormInput name='role' className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md" />    
-                <button onClick={() => addParticipant()} className='max-w-[40px]'>Add</button>
+                <button onClick={() => addParticipant()} className='max-w-[30px]'><Check /></button>
             </div>
         </FormProvider>
 );

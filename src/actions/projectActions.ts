@@ -2,8 +2,16 @@
 
 import { alias } from "drizzle-orm/sqlite-core";
 import {db} from "../../db/db";
-import {InsertProject, project, sprint, user, userProject} from "../../db/schema";
+import {InsertProject, InsertUserProject, project, sprint, user, userProject} from "../../db/schema";
 import {and, eq, SQL} from "drizzle-orm";
+
+export type ProjectWithUserProjecs = {
+	Project: InsertProject,
+	UserProjectEntities: {
+		User: number;
+		Role: string;
+	}[];
+};
 
 export const getProject = async (filters?: SQL[]) => {
 	return await db.select().from(user).where(filters ? and(...filters) : undefined);
@@ -11,6 +19,18 @@ export const getProject = async (filters?: SQL[]) => {
 
 export const createProject = async (data: InsertProject) => {
 	return await db.insert(project).values(data);
+}
+
+export const createProjectWithUserProject = async (data: ProjectWithUserProjecs) => {
+	const projectEntity = await db.insert(project).values(data.Project);
+	data.UserProjectEntities.length > 0 ? await db
+									.insert(userProject)
+									.values(data.UserProjectEntities.map(up => { 
+										return {...up, Project: Number(projectEntity.lastInsertRowid)}
+									}))
+		 : undefined;
+
+	return projectEntity;
 }
 
 // Get all projects with all participants
