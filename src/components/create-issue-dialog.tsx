@@ -17,7 +17,7 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { FormLabelField } from './form-fields/form-label-field';
+import { LabelInputField } from './form-fields/label-input-field';
 import { FormSelectField } from './form-fields/form-select';
 import { LabelSelectField } from './form-fields/label-select-field';
 
@@ -112,8 +112,8 @@ const CreateIssueDialog = ({projects, trigger, sprints}: CreateIssueDialogType) 
                                         setSelectedProject(selectedProject);
                                         setSprintsToSelect(sprints.filter(s => s.Project === selectedProject))
                                     }} />
-                                <FormLabelField label="Summary" name='summary' type='text' />
-                                <FormLabelField label="Story points" name='storyPoints' type='number' />
+                                <LabelInputField label="Summary" name='summary' type='text' />
+                                <LabelInputField label="Story points" name='storyPoints' type='number' />
                                 
                                 <LabelSelectField label="Sprint" name='sprint' data={sprintsToSelect.map(s => { return {key: s.ID, value: s.Name}})} className="min-w-[230px] flex-grow p-2 rounded-md" />
                                 <LabelSelectField label="Label" name='label' data={getLabels().map(l => { return {key: l.ID, value: l.Name}})} className="min-w-[230px] flex-grow p-2 rounded-md" />

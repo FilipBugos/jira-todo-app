@@ -7,7 +7,7 @@ type FormLabelInputProps = HTMLProps<HTMLInputElement> & {
     type: string
 };
 
-export const FormLabelField = ({
+export const LabelInputField = ({
     name,
     label,
     type,
