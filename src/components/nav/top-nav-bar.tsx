@@ -6,6 +6,7 @@ import { sprint, user, userProject } from "../../../db/schema";
 import { getSprint, getSprintsOfUser } from "@/actions/sprintActions";
 import { Link } from "lucide-react";
 import { PageLink } from "./page-link";
+import CreateProjectDialog from "../create-project-dialog";
 
 export default async function TopNavBar() {
   
@@ -16,6 +17,7 @@ export default async function TopNavBar() {
   }
 
   const sprints = await getSprintsOfUser(loggedInUser ? [eq(user.ID, loggedInUser?.ID)] : undefined);
+  const users = await getUser();
   return (
     
     <>
@@ -30,7 +32,9 @@ export default async function TopNavBar() {
              />
         </div>
         <div className="m-3">
-                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="..." >Create project</PageLink>
+            <CreateProjectDialog 
+             trigger={<button className="flex cursor-pointer items-center justify-between rounded-md bg-gray-600 px-4 py-2 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-600 focus-visible:ring-offset-2 active:scale-95">Create project</button>}
+             users={users} />
         </div>
         <div className="m-3">
                 <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="...">Profile</PageLink>
