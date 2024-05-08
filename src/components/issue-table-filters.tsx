@@ -4,6 +4,7 @@ import { IssueJoined } from "@/actions/issueActions";
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import IssueFilter, { FilterValues, SelectOption } from "./issue-filters";
 import IssueTable from "./issue-table";
+import { HiddenColumnsType } from "./issue-component";
 
 interface IssueTableFiltersProps {
   issues: IssueJoined[];
@@ -12,6 +13,7 @@ interface IssueTableFiltersProps {
   usersOptions: SelectOption[];
   statusOptions: SelectOption[];
   labelOptions: SelectOption[];
+  hiddenColumns?: HiddenColumnsType[];
 }
 
 /**
@@ -31,6 +33,7 @@ function IssueTableFilters({
   usersOptions,
   statusOptions,
   labelOptions,
+  hiddenColumns,
 }: IssueTableFiltersProps) {
   const [filters, setFilters] = useState<FilterValues>({
     summaryFilter: "",
@@ -81,6 +84,7 @@ function IssueTableFilters({
         issues={filteredIssues}
         onDropIssue={onDropIssue}
         tableName={tableName}
+        hiddenColumns={hiddenColumns}
       />
     </div>
   );

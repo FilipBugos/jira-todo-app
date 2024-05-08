@@ -84,9 +84,6 @@ export const sprint = sqliteTable("Sprint", {
 		.notNull(),
 });
 
-
-
-
 export const userProject = sqliteTable("UserProject", {
 	ID: integer("id").primaryKey(),
 	User: integer("user-id")
@@ -129,6 +126,3 @@ export type SelectUserProject = typeof userProject.$inferSelect;
 
 export type InsertIssue = typeof issue.$inferInsert;
 export type SelectIssue = typeof issue.$inferSelect;
-
-
-

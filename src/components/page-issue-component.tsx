@@ -70,6 +70,7 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
             value: item.ID,
             label: item.Name,
           }))}
+          hiddenColumns={["Sprint", "Status"]}
         />
       ))}
     </>

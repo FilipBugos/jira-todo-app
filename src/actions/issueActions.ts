@@ -4,6 +4,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 import { db } from "../../db/db";
 import { InsertIssue, issue, sprint, user } from "../../db/schema";
 import { and, eq, SQL } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const getIssue = async (filters?: SQL[]) => {
   return await db
@@ -13,7 +14,9 @@ export const getIssue = async (filters?: SQL[]) => {
 };
 
 export const createIssue = async (data: InsertIssue) => {
-  return await db.insert(issue).values(data);
+  const insertedIssue =  await db.insert(issue).values(data);
+  revalidatePath("/");
+  return insertedIssue;
 };
 
 export const getIssuesJoined = async (filters?: SQL[]) => {

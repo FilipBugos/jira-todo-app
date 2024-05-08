@@ -1,9 +1,4 @@
 import { IssueJoined, getIssue, getIssuesJoined } from "@/actions/issueActions";
-import { db } from "../../db/db";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { Providers } from "./providers";
-import IssueTable from "@/components/issue-table";
 import PageIssues from "@/components/page-issue-component";
 import { getUser } from "@/actions/userActions";
 import { getLabels, getStatuses } from "@/lib/utils";
