@@ -9,13 +9,12 @@ import {
 import type { AdapterAccount } from "next-auth/adapters"
 
 export const user = sqliteTable("user", {
-	ID: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+	ID: integer('id').primaryKey(),
 	name: text("name").notNull(),
 	email: text("email").notNull(),
 	emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
 	image: text("image"),
+	password: text("password").notNull(),
 })
 
 export const accounts = sqliteTable(
@@ -51,7 +50,7 @@ export const sessions = sqliteTable("session", {
 })
 
 export const verificationTokens = sqliteTable(
-	"verificationToken",
+	"VerificationToken",
 	{
 		identifier: text("identifier").notNull(),
 		token: text("token").notNull(),
@@ -126,3 +125,13 @@ export type SelectUserProject = typeof userProject.$inferSelect;
 
 export type InsertIssue = typeof issue.$inferInsert;
 export type SelectIssue = typeof issue.$inferSelect;
+
+export type InsertAccount = typeof accounts.$inferInsert;
+export type SelectAccount = typeof accounts.$inferSelect;
+
+export type InsertSession = typeof sessions.$inferInsert;
+export type SelectSession = typeof sessions.$inferSelect;
+
+export type InsertVerificationToken = typeof verificationTokens.$inferInsert;
+export type SelectVerificationToken = typeof verificationTokens.$inferSelect;
+
