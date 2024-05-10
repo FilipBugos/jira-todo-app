@@ -112,7 +112,7 @@ const CreateIssueDialog = ({
               onInteractOutside={(e) => {
                 e.preventDefault();
               }}
-              className="DialogContent bg-slate-300 w-8/12"
+              className="DialogContent bg-slate-300 w-6/12"
             >
               <DialogTitle className="DialogTitle text-xl mb-5">
                 Create Issue

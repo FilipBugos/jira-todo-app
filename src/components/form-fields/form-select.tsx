@@ -22,7 +22,8 @@ export const FormSelectField = ({
 		formState: { errors }
 	} = useFormContext();
 
-    return (<label htmlFor={name} className="form-control w-full min-w-[230px]">
+    return (<label htmlFor={name} className="form-control w-full">
+        <div className='flex flex-col'>
                 <select {...register(name)} className={cn(className)} {...selectProps}>
                     <option selected></option>
                     {data.map(d => <option key={d.key} value={d.key}>{d.value}</option>)}
@@ -32,6 +33,7 @@ export const FormSelectField = ({
                                 {errors[name]?.message?.toString()}
                             </span>
                         )}
+                        </div>
             </label>
     );
 };

@@ -3,7 +3,7 @@
 import { alias } from "drizzle-orm/sqlite-core";
 import {db} from "../../db/db";
 import {InsertProject, InsertUserProject, project, sprint, user, userProject} from "../../db/schema";
-import {and, eq, SQL} from "drizzle-orm";
+import {and, eq, or, SQL} from "drizzle-orm";
 
 export type ProjectWithUserProjecs = {
 	Project: InsertProject,
@@ -41,7 +41,7 @@ export const getAllUserProjects = async (filters?: SQL[]) => {
 		.from(userProject)
 		.leftJoin(userProject2, eq(userProject.ID, userProject2.ID))
 		.leftJoin(project, eq(project.ID, userProject.Project))
-		.leftJoin(user, eq(user.ID, userProject2.User))
+		.leftJoin(user, or(eq(user.ID, userProject2.User), eq(user.ID, project.CreatedBy)))
 		.where(filters ? and(...filters) : undefined)
 		.execute();
 
