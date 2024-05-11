@@ -33,7 +33,7 @@ export const project = sqliteTable("Project", {
 
 export const projectRelations = relations(project, ({ one, many }) => ({
   CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.ID] }),
-  Participants: many(userProject),
+  Members: many(userProject),
   Sprints: many(sprint),
   Issues: many(issue),
 }));
