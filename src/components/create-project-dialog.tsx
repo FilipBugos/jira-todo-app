@@ -3,6 +3,15 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useState } from "react";
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import {
+  createProjectFromDialog,
+  type ProjectWithUserProjecs,
+} from "@/actions/projectActions";
 import {
   Dialog,
   DialogClose,
@@ -11,24 +20,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { LabelInputField } from "./form-fields/label-input-field";
-import { FormSelectField } from "./form-fields/form-select";
-import { FormInput } from "./form-fields/form-input";
-import { useState } from "react";
-import { SelectUser } from "../../db/schema";
+import revalidateRootLayout from "@/common/revalidate";
+
+import { type SelectUser } from "../../db/schema";
+
 import {
   AddParticipantToProject,
-  ParticipantsType,
+  type ParticipantsType
 } from "./add-participant-to-project-form";
-import { Description } from "@radix-ui/react-dialog";
-import {
-  createProjectWithUserProject,
-  ProjectWithUserProjecs,
-} from "@/actions/projectActions";
-import { revalidatePath, revalidateTag } from "next/cache";
-import router from "next/router";
-import { Check, X } from "lucide-react";
+import { FormInput } from "./form-fields/form-input";
+import { LabelInputField } from "./form-fields/label-input-field";
 
 type CreateProjectDialogType = {
   users: SelectUser[];
@@ -37,17 +38,20 @@ type CreateProjectDialogType = {
 
 const formSchema = z.object({
   name: z.string().min(4, { message: "Project has to have name." }).default(""),
-  description: z.string().optional().default(""),
+  description: z.string().optional().default("")
 });
 
 export type CreateProjectSchema = z.infer<typeof formSchema>;
 
 const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
+  // TODO: change this once auth is done
+  const loggedInUser = 1;
   const [participants, setParticipants] = useState<ParticipantsType[]>([]);
   const [userEntities, setUsers] = useState<SelectUser[]>(users);
+  const router = useRouter();
 
   const form = useForm<CreateProjectSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema)
   });
 
   const reset = () => {
@@ -67,23 +71,25 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
               CreatedBy: 1,
               CreatedTime: new Date(),
               Name: userProject.name,
-              Description: userProject.description,
+              Description: userProject.description
             },
-            UserProjectEntities: participants.map((p) => {
-              return {
+            UserProjectEntities: [
+              ...participants.map((p) => ({
                 User: p.user.id,
                 Role: p.role,
-              };
-            }),
+              })),
+              { User: loggedInUser, Role: "owner" }
+            ],
           };
 
           try {
-            await createProjectWithUserProject(entity);
-            //revalidateTag();
+            await createProjectFromDialog(entity);
             toast.success("Project was successfully created");
+            revalidateRootLayout();
             reset();
             document.getElementById("closeDialogBtn")?.click();
           } catch (e) {
+            console.log(e);
             if (e instanceof Error) {
               toast.error(e.message);
             }
@@ -110,14 +116,14 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
   return (
     <FormProvider {...form}>
       <form onSubmit={() => console.log("here2")}>
-        <div>
-          <Dialog>
+        <div className="">
+          <Dialog onOpenChange={reset}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent
               onInteractOutside={(e) => {
                 e.preventDefault();
               }}
-              className="DialogContent bg-slate-300 w-8/12"
+              className="DialogContent bg-slate-300 w-5/12"
             >
               <DialogTitle className="DialogTitle text-xl mb-5">
                 Create Project
@@ -127,39 +133,35 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
 
                 <label className="mt-5">Choose project participants</label>
 
-                {participants.map((p) => {
-                  return (
-                    <div key={p.user.id} className="grid grid-cols-3 gap-10">
-                      <FormInput
-                        key={p.user.id}
-                        disabled
-                        name="ParticipantID"
-                        value={p.user.name}
-                        className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md"
-                      />
-                      <FormInput
-                        key={p.user.id}
-                        disabled
-                        name="ParticipantID"
-                        value={p.role}
-                        className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md"
-                      />
-                      <button
-                        onClick={() => {
-                          deleteUser(p.user.id);
-                        }}
-                        className="max-w-[30px]"
-                      >
-                        <X />
-                      </button>
-                    </div>
-                  );
-                })}
+                {participants.map((p) => (
+                  <div key={p.user.id} className="flex flex-row gap-10">
+                    <FormInput
+                      key={p.user.id}
+                      disabled
+                      name="ParticipantID"
+                      value={p.user.name}
+                      className="grid-col-0 min-w-[160px] min-h-[40px] p-2 rounded-md"
+                    />
+                    <FormInput
+                      key={p.user.id}
+                      disabled
+                      name="ParticipantID"
+                      value={p.role}
+                      className="min-w-[160px] min-h-[40px] flex-grow p-2 rounded-md"
+                    />
+                    <button
+                      onClick={() => {
+                        deleteUser(p.user.id);
+                      }}
+                      className="max-w-[30px]"
+                    >
+                      <X />
+                    </button>
+                  </div>
+                ))}
 
                 <AddParticipantToProject
-                  data={userEntities.map((u) => {
-                    return { key: u.ID, value: u.Name };
-                  })}
+                  data={userEntities.map((u) => ({ key: u.ID, value: u.Name }))}
                   setData={selectUser}
                 />
 
@@ -169,7 +171,7 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
                     {...form.register("description")}
                     className="min-w-[180px] flex-grow p-2 rounded-md row-span-5"
                     placeholder="Enter description..."
-                  ></textarea>
+                  />
                 </div>
               </div>
               <DialogFooter>

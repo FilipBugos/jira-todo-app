@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	primaryKey,
 	sqliteTable,
@@ -61,6 +61,11 @@ export const verificationTokens = sqliteTable(
 	})
 )
 
+export const userRelations = relations(user, ({ many }) => ({
+	Projects: many(userProject),
+	AssignedIssues: many(issue),
+	CreatedIssues: many(issue)
+}));
 export const project = sqliteTable("Project", {
 	ID: integer("id").primaryKey(),
 	Name: text("name").notNull().default(""),
@@ -73,6 +78,13 @@ export const project = sqliteTable("Project", {
 		.notNull(),
 });
 
+export const projectRelations = relations(project, ({ one, many }) => ({
+	CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.ID] }),
+	Members: many(userProject),
+	Sprints: many(sprint),
+	Issues: many(issue)
+}));
+
 export const sprint = sqliteTable("Sprint", {
 	ID: integer("id").primaryKey(),
 	Name: text("name").notNull(),
@@ -82,6 +94,11 @@ export const sprint = sqliteTable("Sprint", {
 		.references(() => project.ID)
 		.notNull(),
 });
+
+export const sprintRelations = relations(sprint, ({ one, many }) => ({
+	Project: one(project, { fields: [sprint.Project], references: [project.ID] }),
+	Issues: many(issue)
+}));
 
 export const userProject = sqliteTable("UserProject", {
 	ID: integer("id").primaryKey(),
@@ -93,6 +110,14 @@ export const userProject = sqliteTable("UserProject", {
 		.notNull(),
 	Role: text("role").notNull(),
 });
+
+export const userProjectRelations = relations(userProject, ({ one }) => ({
+	User: one(user, { fields: [userProject.User], references: [user.ID] }),
+	Project: one(project, {
+		fields: [userProject.Project],
+		references: [project.ID]
+	}),
+}));
 
 export const issue = sqliteTable("Issue", {
 	ID: integer("id").primaryKey(),

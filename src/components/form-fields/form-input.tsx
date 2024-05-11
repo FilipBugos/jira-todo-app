@@ -1,37 +1,42 @@
-import { cn } from '@/lib/cn';
-import { type HTMLProps } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { type HTMLProps } from "react";
+import { useFormContext } from "react-hook-form";
+
+import { cn } from "@/lib/cn";
 
 type FormInputProps = HTMLProps<HTMLInputElement> & {
-	name: string;
+  name: string;
 };
 
 export const FormInput = ({
-    name,
-    className,
-	...inputProps
+  name,
+  className,
+  ...inputProps
 }: FormInputProps) => {
-    const {
-		register,
-		formState: { errors }
-	} = useFormContext();
-    
-    return (<label htmlFor={name} className="form-control w-full">
-			<input
-				id={name}
-				className={cn(
-					'input input-bordered w-full',
-					errors[name] && 'input-error',
-					className
-				)}
-				{...inputProps}
-				{...register(name)}
-			/>
+  const {
+    register,
+    formState: { errors }
+  } = useFormContext();
 
-			{errors[name] && (
-				<span className="text-red-600 text-xs">
-					{errors[name]?.message?.toString()}
-				</span>
-			)}
-		</label>);
+  return (
+    <div className="form-control w-full">
+      <div className="flex flex-col">
+        <input
+          id={name}
+          className={cn(
+            "input input-bordered w-full",
+            errors[name] && "input-error",
+            className
+          )}
+          {...inputProps}
+          {...register(name)}
+        />
+
+        {errors[name] && (
+          <span className="text-red-600 text-xs">
+            {errors[name]?.message?.toString()}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 };

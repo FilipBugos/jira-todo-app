@@ -1,20 +1,20 @@
 "use server";
 
 import { alias } from "drizzle-orm/sqlite-core";
-import { db } from "../../db/db";
-import { InsertIssue, issue, sprint, user } from "../../db/schema";
-import { and, eq, SQL } from "drizzle-orm";
+import { and, eq, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export const getIssue = async (filters?: SQL[]) => {
-  return await db
+import { db } from "../../db/db";
+import { type InsertIssue, issue, sprint, user } from "../../db/schema";
+
+export const getIssue = async (filters?: SQL[]) =>
+  await db
     .select()
     .from(issue)
     .where(filters ? and(...filters) : undefined);
-};
 
 export const createIssue = async (data: InsertIssue) => {
-  const insertedIssue =  await db.insert(issue).values(data);
+  const insertedIssue = await db.insert(issue).values(data);
   revalidatePath("/");
   return insertedIssue;
 };
@@ -35,8 +35,19 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
     ...issue.Issue,
     CreatedBy: issue.creator,
     AssignedTo: issue.assignee,
-    Sprint: issue.Sprint,
+    Sprint: issue.Sprint
   }));
+};
+
+export const updateIssue = async (data: InsertIssue) => {
+  const returned = await db
+    .update(issue)
+    .set(data)
+    .where(eq(issue.ID, data.ID))
+    .returning({ updatedId: issue.ID });
+  revalidatePath("/");
+  console.log(data);
+  console.log(returned);
 };
 
 export type IssueJoined = Awaited<ReturnType<typeof getIssuesJoined>>[number];

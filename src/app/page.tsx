@@ -1,4 +1,4 @@
-import { IssueJoined, getIssue, getIssuesJoined } from "@/actions/issueActions";
+import { getIssuesJoined, type IssueJoined } from "@/actions/issueActions";
 import PageIssues from "@/components/page-issue-component";
 import { getUser } from "@/actions/userActions";
 import { getLabels, getStatuses } from "@/lib/utils";

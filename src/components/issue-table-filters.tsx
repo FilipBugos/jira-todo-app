@@ -1,12 +1,17 @@
 "use client";
 
-import { IssueJoined } from "@/actions/issueActions";
-import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
-import IssueFilter, { FilterValues, SelectOption } from "./issue-filters";
-import IssueTable from "./issue-table";
-import { HiddenColumnsType } from "./issue-component";
+import React, { memo, useMemo, useState } from "react";
 
-interface IssueTableFiltersProps {
+import { type IssueJoined } from "@/actions/issueActions";
+
+import IssueFilter, {
+  type FilterValues,
+  type SelectOption,
+} from "./issue-filters";
+import IssueTable from "./issue-table";
+import { type HiddenColumnsType } from "./issue-component";
+
+type IssueTableFiltersProps = {
   issues: IssueJoined[];
   onDropIssue: (id: number, toTable: string) => void;
   tableName: string;
@@ -14,7 +19,7 @@ interface IssueTableFiltersProps {
   statusOptions: SelectOption[];
   labelOptions: SelectOption[];
   hiddenColumns?: HiddenColumnsType[];
-}
+};
 
 /**
  * @description Wrapper around table component with filters
@@ -26,7 +31,7 @@ interface IssueTableFiltersProps {
  * @param labelOptions - label options
  *
  */
-function IssueTableFilters({
+const IssueTableFilters = ({
   issues,
   onDropIssue,
   tableName,
@@ -34,7 +39,7 @@ function IssueTableFilters({
   statusOptions,
   labelOptions,
   hiddenColumns,
-}: IssueTableFiltersProps) {
+}: IssueTableFiltersProps) => {
   const [filters, setFilters] = useState<FilterValues>({
     summaryFilter: "",
     descriptionFilter: "",
@@ -44,33 +49,34 @@ function IssueTableFilters({
     labelFilter: [],
   });
 
-  const filteredIssues = useMemo(() => {
-    return issues.filter((issue) => {
-      return (
-        issue.Summary.toLowerCase().includes(
-          filters.summaryFilter.toLowerCase()
-        ) &&
-        issue.Description?.toLowerCase()?.includes(
-          filters.descriptionFilter.toLowerCase()
-        ) &&
-        (filters.createdByFilter.length === 0 ||
-          filters.createdByFilter.some(
-            (opt) => opt.value === issue.CreatedBy?.ID
-          )) &&
-        (filters.assignedToFilter.length === 0 ||
-          filters.assignedToFilter.some(
-            (opt) => opt.value === issue.AssignedTo?.ID
-          )) &&
-        (filters.statusFilter.length === 0 ||
-          filters.statusFilter.some(
-            // TODO: remove parseInt
-            (opt) => opt.value === parseInt(issue.Status ?? "")
-          )) &&
-        (filters.labelFilter.length === 0 ||
-          filters.labelFilter.some((opt) => opt.value === issue.Label))
-      );
-    });
-  }, [issues, filters]);
+  const filteredIssues = useMemo(
+    () =>
+      issues.filter(
+        (issue) =>
+          issue.Summary.toLowerCase().includes(
+            filters.summaryFilter.toLowerCase(),
+          ) &&
+          issue.Description?.toLowerCase()?.includes(
+            filters.descriptionFilter.toLowerCase(),
+          ) &&
+          (filters.createdByFilter.length === 0 ||
+            filters.createdByFilter.some(
+              (opt) => opt.value === issue.CreatedBy?.ID,
+            )) &&
+          (filters.assignedToFilter.length === 0 ||
+            filters.assignedToFilter.some(
+              (opt) => opt.value === issue.AssignedTo?.ID,
+            )) &&
+          (filters.statusFilter.length === 0 ||
+            filters.statusFilter.some(
+              // TODO: remove parseInt
+              (opt) => opt.value === parseInt(issue.Status ?? ""),
+            )) &&
+          (filters.labelFilter.length === 0 ||
+            filters.labelFilter.some((opt) => opt.value === issue.Label))
+      ),
+    [issues, filters]
+  );
 
   return (
     <div>
@@ -88,6 +94,6 @@ function IssueTableFilters({
       />
     </div>
   );
-}
+};
 
 export default memo(IssueTableFilters);

@@ -1,22 +1,24 @@
 "use client";
 
 import { memo, useState } from "react";
-import { SelectIssue, SelectUser } from "../../db/schema";
-import IssueTable from "./issue-table";
-import IssueTableFilters from "./issue-table-filters";
-import { IssueJoined } from "@/actions/issueActions";
 
-interface PageIssuesProps {
+import { type IssueJoined } from "@/actions/issueActions";
+
+import { type SelectUser } from "../../db/schema";
+
+import IssueTableFilters from "./issue-table-filters";
+
+type PageIssuesProps = {
   issues: { [key: string | number]: IssueJoined[] };
   users: SelectUser[];
   labels: { ID: number; Name: string }[];
   statuses: { ID: number; Name: string }[];
-}
+};
 
 /**
  * Example usage of tables with issues and drag&drop, with and without filters.
  */
-function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
+const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
   const [test, setTest] = useState(issues);
 
   return (
@@ -47,12 +49,12 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
             if (key === fromTable) return;
             setTest((prev) => {
               const foundItem = prev[fromTable].find(
-                (issue) => issue.ID === id
+                (issue) => issue.ID === id,
               );
               if (!foundItem) return prev;
               prev[key] = [...prev[key], foundItem];
               prev[fromTable] = prev[fromTable].filter(
-                (issue) => issue.ID !== id
+                (issue) => issue.ID !== id,
               );
               return { ...prev };
             });
@@ -75,6 +77,6 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
       ))}
     </>
   );
-}
+};
 
 export default memo(PageIssues);

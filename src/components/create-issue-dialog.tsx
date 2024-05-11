@@ -1,11 +1,12 @@
 "use client";
 
-import { SelectSprint } from "../../db/schema";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProjectsWithUsers } from "@/actions/projectActions";
+import { toast } from "sonner";
+
+import { type ProjectsWithUsers } from "@/actions/projectActions";
 import { getLabels, getStatuses } from "@/lib/utils";
 import { createIssue } from "@/actions/issueActions";
 import {
@@ -14,11 +15,12 @@ import {
   DialogContent,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
+
+import { type InsertIssue, type SelectSprint } from "../../db/schema";
+
 import { LabelInputField } from "./form-fields/label-input-field";
-import { FormSelectField } from "./form-fields/form-select";
 import { LabelSelectField } from "./form-fields/label-select-field";
 
 type CreateIssueDialogType = {
@@ -38,10 +40,14 @@ const formSchema = z.object({
     .min(3, { message: "Issue has to contain summary." })
     .default(""),
   description: z.string().optional().default(""),
-  sprint: z.string().optional().transform(Number).default(""),
+  sprint: z
+    .string()
+    .min(1, { message: "Issue has to be assigned to sprint or backlog." })
+    .transform(Number)
+    .default(""),
   label: z.string().optional().transform(Number).default(""),
   assignee: z.string().optional().transform(Number).default(""),
-  storyPoints: z.string().optional().transform(Number).default(""),
+  storyPoints: z.string().optional().transform(Number).default("")
 });
 
 export type CreateIssueSchema = z.infer<typeof formSchema>;
@@ -49,14 +55,16 @@ export type CreateIssueSchema = z.infer<typeof formSchema>;
 const CreateIssueDialog = ({
   projects,
   trigger,
-  sprints,
+  sprints
 }: CreateIssueDialogType) => {
   const [selectedProject, setSelectedProject] = useState<number>();
   const [sprintsToSelect, setSprintsToSelect] = useState<SelectSprint[]>([]);
 
   const form = useForm<CreateIssueSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema)
   });
+
+  console.log("Sprint to select", sprintsToSelect);
 
   const reset = () => {
     form.resetField("project");
@@ -67,21 +75,22 @@ const CreateIssueDialog = ({
     form.resetField("assignee");
     form.resetField("storyPoints");
   };
+
   async function submit() {
-    form
+    await form
       .handleSubmit(
         async (issue) => {
-          const issueEntity = {
+          const issueEntity: InsertIssue = {
             CreatedBy: 1,
-            Project: issue.project,
+            ProjectID: issue.project,
             Description: issue.description ?? null,
             Summary: issue.summary,
             Estimation: issue.storyPoints,
             CreatedTime: new Date(),
             Label: issue.label,
             Status: getStatuses().at(0)?.Name,
-            ...(issue.sprint && { SprintID: issue.sprint }),
-            ...(issue.assignee && { AssignedTo: issue.assignee }),
+            SprintID: issue.sprint,
+            ...(issue.assignee && { AssignedTo: issue.assignee })
           };
 
           try {
@@ -106,13 +115,13 @@ const CreateIssueDialog = ({
     <FormProvider {...form}>
       <form>
         <div className="">
-          <Dialog>
+          <Dialog onOpenChange={reset}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent
               onInteractOutside={(e) => {
                 e.preventDefault();
               }}
-              className="DialogContent bg-slate-300 w-8/12"
+              className="DialogContent bg-slate-300 w-6/12"
             >
               <DialogTitle className="DialogTitle text-xl mb-5">
                 Create Issue
@@ -121,9 +130,10 @@ const CreateIssueDialog = ({
                 <LabelSelectField
                   label="Project"
                   name="project"
-                  data={projects.map((p) => {
-                    return { key: p.project?.ID, value: p.project?.Name };
-                  })}
+                  data={projects.map((p) => ({
+                    key: p.project?.ID,
+                    value: p.project?.Name
+                  }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                   onChange={(selectedOption) => {
                     const selectedProject = Number(selectedOption.target.value);
@@ -132,6 +142,8 @@ const CreateIssueDialog = ({
                       sprints.filter((s) => s.Project === selectedProject)
                     );
                   }}
+                  value={selectedProject}
+                  defaultValue=""
                 />
                 <LabelInputField label="Summary" name="summary" type="text" />
                 <LabelInputField
@@ -143,27 +155,32 @@ const CreateIssueDialog = ({
                 <LabelSelectField
                   label="Sprint"
                   name="sprint"
-                  data={sprintsToSelect.map((s) => {
-                    return { key: s.ID, value: s.Name };
-                  })}
+                  data={sprintsToSelect.map((s) => ({
+                    key: s.ID,
+                    value: s.Name
+                  }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <LabelSelectField
                   label="Label"
                   name="label"
-                  data={getLabels().map((l) => {
-                    return { key: l.ID, value: l.Name };
-                  })}
+                  data={getLabels().map((l) => ({ key: l.ID, value: l.Name }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <LabelSelectField
                   label="Assignee"
                   name="assignee"
                   data={projects
-                    .filter((p) => p.project?.ID == selectedProject && p.user)
-                    .map((p) => {
-                      return { key: p.user?.ID, value: p.user?.Name };
-                    })}
+                    .filter(
+                      (p) =>
+                        p.project?.ID == selectedProject && p.project.Members
+                    )
+                    .map((p) => [...p.project.Members])
+                    .flat()
+                    .map((u) => ({
+                      key: u.User.ID,
+                      value: u.User.Name
+                    }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <div className="grid grid-cols-2 grid-rows-5">
@@ -172,7 +189,7 @@ const CreateIssueDialog = ({
                     {...form.register("description")}
                     className="min-w-[180px] flex-grow p-2 rounded-md row-span-5"
                     placeholder="Enter description..."
-                  ></textarea>
+                  />
                 </div>
               </div>
               <DialogFooter>
