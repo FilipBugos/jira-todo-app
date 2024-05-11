@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   foreignKey,
   primaryKey,
@@ -13,6 +13,12 @@ export const user = sqliteTable("User", {
   Password: text("password").notNull(),
 });
 
+export const userRelations = relations(user, ({ many }) => ({
+  Projects: many(userProject),
+  AssignedIssues: many(issue),
+  CreatedIssues: many(issue),
+}));
+
 export const project = sqliteTable("Project", {
   ID: integer("id").primaryKey(),
   Name: text("name").notNull().default(""),
@@ -25,6 +31,13 @@ export const project = sqliteTable("Project", {
     .notNull(),
 });
 
+export const projectRelations = relations(project, ({ one, many }) => ({
+  CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.ID] }),
+  Members: many(userProject),
+  Sprints: many(sprint),
+  Issues: many(issue),
+}));
+
 export const sprint = sqliteTable("Sprint", {
   ID: integer("id").primaryKey(),
   Name: text("name").notNull(),
@@ -34,6 +47,11 @@ export const sprint = sqliteTable("Sprint", {
     .references(() => project.ID)
     .notNull(),
 });
+
+export const sprintRelations = relations(sprint, ({ one, many }) => ({
+  Project: one(project, { fields: [sprint.Project], references: [project.ID] }),
+  Issues: many(issue),
+}));
 
 export const userProject = sqliteTable("UserProject", {
   ID: integer("id").primaryKey(),
@@ -45,6 +63,14 @@ export const userProject = sqliteTable("UserProject", {
     .notNull(),
   Role: text("role").notNull(),
 });
+
+export const userProjectRelations = relations(userProject, ({ one }) => ({
+  User: one(user, { fields: [userProject.User], references: [user.ID] }),
+  Project: one(project, {
+    fields: [userProject.Project],
+    references: [project.ID]
+  }),
+}));
 
 export const issue = sqliteTable("Issue", {
   ID: integer("id").primaryKey(),
@@ -61,7 +87,20 @@ export const issue = sqliteTable("Issue", {
   Estimation: integer("estimation"),
   Label: integer("label"),
   SprintID: integer("sprint-id").references(() => sprint.ID),
+  ProjectID: integer("project-id")
+    .references(() => project.ID)
+    .notNull(),
 });
+
+export const issueRelations = relations(issue, ({ one }) => ({
+  CreatedBy: one(user, { fields: [issue.CreatedBy], references: [user.ID] }),
+  AssignedTo: one(user, { fields: [issue.AssignedTo], references: [user.ID] }),
+  Sprint: one(sprint, { fields: [issue.SprintID], references: [sprint.ID] }),
+  Project: one(project, {
+    fields: [issue.ProjectID],
+    references: [project.ID]
+  }),
+}));
 
 export type InsertUser = typeof user.$inferInsert;
 export type SelectUser = typeof user.$inferSelect;

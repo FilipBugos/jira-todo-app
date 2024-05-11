@@ -1,16 +1,19 @@
 "use client";
-import { DropTargetMonitor, useDrop } from "react-dnd";
-import { SelectIssue } from "../../db/schema";
-import IssueComponent, { HiddenColumnsType } from "./issue-component";
+import { type DropTargetMonitor, useDrop } from "react-dnd";
 import { useRef } from "react";
-import { IssueJoined } from "@/actions/issueActions";
 
-interface IssueTableProps {
+import { type IssueJoined } from "@/actions/issueActions";
+
+import { SelectIssue } from "../../db/schema";
+
+import IssueComponent, { type HiddenColumnsType } from "./issue-component";
+
+type IssueTableProps = {
   issues: IssueJoined[];
   onDropIssue: (id: number, toTable: string) => void;
   tableName: string;
   hiddenColumns?: HiddenColumnsType[];
-}
+};
 
 /**
  *
