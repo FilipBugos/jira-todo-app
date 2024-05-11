@@ -35,7 +35,7 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
     ...issue.Issue,
     CreatedBy: issue.creator,
     AssignedTo: issue.assignee,
-    Sprint: issue.Sprint,
+    Sprint: issue.Sprint
   }));
 };
 

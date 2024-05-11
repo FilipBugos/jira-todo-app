@@ -1,27 +1,27 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
-import Select, { MultiValue, ActionMeta } from "react-select";
+import React, { useEffect, useState } from "react";
+import Select, { type MultiValue } from "react-select";
 
-export interface SelectOption {
+export type SelectOption = {
   value: number;
   label: string;
-}
+};
 
-interface IssueFilterProps {
+type IssueFilterProps = {
   onFilterChange: (filters: FilterValues) => void;
   usersOptions: SelectOption[];
   statusOptions: SelectOption[];
   labelOptions: SelectOption[];
-}
+};
 
-export interface FilterValues {
+export type FilterValues = {
   summaryFilter: string;
   descriptionFilter: string;
   createdByFilter: MultiValue<SelectOption>;
   assignedToFilter: MultiValue<SelectOption>;
   statusFilter: MultiValue<SelectOption>;
   labelFilter: MultiValue<SelectOption>;
-}
+};
 
 /**
  *
@@ -37,7 +37,7 @@ const IssueFilter: React.FC<IssueFilterProps> = ({
   onFilterChange,
   labelOptions,
   statusOptions,
-  usersOptions,
+  usersOptions
 }) => {
   const [summaryFilter, setSummaryFilter] = useState<string>("");
   const [descriptionFilter, setDescriptionFilter] = useState<string>("");
@@ -59,7 +59,7 @@ const IssueFilter: React.FC<IssueFilterProps> = ({
       createdByFilter,
       assignedToFilter,
       statusFilter,
-      labelFilter,
+      labelFilter
     });
   }, [
     summaryFilter,
@@ -68,7 +68,7 @@ const IssueFilter: React.FC<IssueFilterProps> = ({
     assignedToFilter,
     statusFilter,
     labelFilter,
-    onFilterChange,
+    onFilterChange
   ]);
 
   return (

@@ -3,8 +3,6 @@ import { useFormContext } from "react-hook-form";
 
 import { cn } from "@/lib/cn";
 
-import { FormInput } from "./form-input";
-
 type FormSelectField = HTMLProps<HTMLSelectElement> & {
   name: string;
   data: {

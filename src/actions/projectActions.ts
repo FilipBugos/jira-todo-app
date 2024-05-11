@@ -1,17 +1,13 @@
 "use server";
 
-import { alias } from "drizzle-orm/sqlite-core";
-import { and, eq, type SQL } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, type SQL } from "drizzle-orm";
 
 import { createSprint } from "@/actions/sprintActions";
 
 import { db } from "../../db/db";
 import {
   type InsertProject,
-  InsertUserProject,
   project,
-  sprint,
   user,
   userProject
 } from "../../db/schema";
@@ -69,8 +65,8 @@ export const getAllUserProjects = async (userID: number) => {
           User: true
         },
       },
-      Sprints: true,
-    }
+      Sprints: true
+    },
   });
   return projectsWithUsers
     .filter((p) => p.Members.some((m) => m.User.ID === userID))

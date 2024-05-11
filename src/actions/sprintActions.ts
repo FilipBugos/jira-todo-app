@@ -1,15 +1,9 @@
 "use server";
 
-import { and, eq, type SQL } from "drizzle-orm";
+import { and, type SQL } from "drizzle-orm";
 
 import { db } from "../../db/db";
-import {
-  type InsertSprint,
-  project,
-  sprint,
-  user,
-  userProject
-} from "../../db/schema";
+import { type InsertSprint, sprint } from "../../db/schema";
 
 export const getSprint = async (filters?: SQL[]) =>
   await db
@@ -27,8 +21,8 @@ export const getSprintsOfUser = async (filters?: SQL[]) =>
       Project: {
         with: {
           Members: true
-        }
-      },
+        },
+      }
     },
     where: filters ? and(...filters) : undefined
   });

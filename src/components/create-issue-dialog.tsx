@@ -15,13 +15,12 @@ import {
   DialogContent,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 
 import { type InsertIssue, type SelectSprint } from "../../db/schema";
 
 import { LabelInputField } from "./form-fields/label-input-field";
-import { FormSelectField } from "./form-fields/form-select";
 import { LabelSelectField } from "./form-fields/label-select-field";
 
 type CreateIssueDialogType = {
@@ -41,10 +40,14 @@ const formSchema = z.object({
     .min(3, { message: "Issue has to contain summary." })
     .default(""),
   description: z.string().optional().default(""),
-  sprint: z.string().min(1, { message: "Issue has to be assigned to sprint or backlog." }).transform(Number).default(""),
+  sprint: z
+    .string()
+    .min(1, { message: "Issue has to be assigned to sprint or backlog." })
+    .transform(Number)
+    .default(""),
   label: z.string().optional().transform(Number).default(""),
   assignee: z.string().optional().transform(Number).default(""),
-  storyPoints: z.string().optional().transform(Number).default(""),
+  storyPoints: z.string().optional().transform(Number).default("")
 });
 
 export type CreateIssueSchema = z.infer<typeof formSchema>;
@@ -52,13 +55,13 @@ export type CreateIssueSchema = z.infer<typeof formSchema>;
 const CreateIssueDialog = ({
   projects,
   trigger,
-  sprints,
+  sprints
 }: CreateIssueDialogType) => {
   const [selectedProject, setSelectedProject] = useState<number>();
   const [sprintsToSelect, setSprintsToSelect] = useState<SelectSprint[]>([]);
 
   const form = useForm<CreateIssueSchema>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema)
   });
 
   console.log("Sprint to select", sprintsToSelect);
@@ -72,6 +75,7 @@ const CreateIssueDialog = ({
     form.resetField("assignee");
     form.resetField("storyPoints");
   };
+
   async function submit() {
     await form
       .handleSubmit(
@@ -86,7 +90,7 @@ const CreateIssueDialog = ({
             Label: issue.label,
             Status: getStatuses().at(0)?.Name,
             SprintID: issue.sprint,
-            ...(issue.assignee && { AssignedTo: issue.assignee }),
+            ...(issue.assignee && { AssignedTo: issue.assignee })
           };
 
           try {
@@ -128,7 +132,7 @@ const CreateIssueDialog = ({
                   name="project"
                   data={projects.map((p) => ({
                     key: p.project?.ID,
-                    value: p.project?.Name,
+                    value: p.project?.Name
                   }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                   onChange={(selectedOption) => {
@@ -153,7 +157,7 @@ const CreateIssueDialog = ({
                   name="sprint"
                   data={sprintsToSelect.map((s) => ({
                     key: s.ID,
-                    value: s.Name,
+                    value: s.Name
                   }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />

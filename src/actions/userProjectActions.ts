@@ -1,14 +1,15 @@
-'use server';
+"use server";
 
-import {db} from "../../db/db";
-import {InsertUserProject, user, userProject} from "../../db/schema";
-import {and, eq, SQL} from "drizzle-orm";
-import {createSprint} from "@/actions/sprintActions";
+import { and, type SQL } from "drizzle-orm";
 
-export const getUserProject = async (filters?: SQL[]) => {
-	return await db.select().from(user).where(filters ? and(...filters) : undefined);
-};
+import { db } from "../../db/db";
+import { type InsertUserProject, user, userProject } from "../../db/schema";
 
-export const createUserProject = async (data: InsertUserProject) => {
-	return await db.insert(userProject).values(data);
-}
+export const getUserProject = async (filters?: SQL[]) =>
+  await db
+    .select()
+    .from(user)
+    .where(filters ? and(...filters) : undefined);
+
+export const createUserProject = async (data: InsertUserProject) =>
+  await db.insert(userProject).values(data);
