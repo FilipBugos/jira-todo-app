@@ -14,19 +14,15 @@ import { PageLink } from "./page-link";
 export default async function TopNavBar() {
   const loggedInUserId = 1;
   const loggedInUser = (await getUser([eq(user.ID, loggedInUserId)])).at(0);
-  const allUserProject = await getAllUserProjects(
-    loggedInUser ? [eq(userProject.User, loggedInUser?.ID)] : undefined
-  );
+  const allUserProject = await getAllUserProjects(loggedInUserId);
   console.log(`AllUserProject: ${allUserProject}`);
   console.log(`LoggedInUser: ${loggedInUser?.ID}`);
   if (!loggedInUser) {
     <div>Error</div>;
   }
-
-  const sprints = await getSprintsOfUser(
-    loggedInUser ? [eq(user.ID, loggedInUser?.ID)] : undefined
-  );
   const users = await getUser();
+
+  const sprints = allUserProject.flatMap((p) => p.project.Sprints);
   return (
     <div className="bg-slate-300 flex flex-row gap-2 mb-5">
       <div className="m-3">
@@ -42,7 +38,7 @@ export default async function TopNavBar() {
               Create issue
             </button>
           }
-          sprints={sprints.map((s) => s.sprint)}
+          sprints={sprints.map((s) => s)}
         />
       </div>
       <div className="m-3">

@@ -1,11 +1,12 @@
 "use client";
 
-import { SelectSprint } from "../../db/schema";
 import { FormProvider, useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProjectsWithUsers } from "@/actions/projectActions";
+import { toast } from "sonner";
+
+import { type ProjectsWithUsers } from "@/actions/projectActions";
 import { getLabels, getStatuses } from "@/lib/utils";
 import { createIssue } from "@/actions/issueActions";
 import {
@@ -16,7 +17,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
+
+import { type InsertIssue, type SelectSprint } from "../../db/schema";
+
 import { LabelInputField } from "./form-fields/label-input-field";
 import { FormSelectField } from "./form-fields/form-select";
 import { LabelSelectField } from "./form-fields/label-select-field";
@@ -58,6 +61,8 @@ const CreateIssueDialog = ({
     resolver: zodResolver(formSchema),
   });
 
+  console.log("Sprint to select", sprintsToSelect);
+
   const reset = () => {
     form.resetField("project");
     form.resetField("summary");
@@ -68,12 +73,12 @@ const CreateIssueDialog = ({
     form.resetField("storyPoints");
   };
   async function submit() {
-    form
+    await form
       .handleSubmit(
         async (issue) => {
-          const issueEntity = {
+          const issueEntity: InsertIssue = {
             CreatedBy: 1,
-            Project: issue.project,
+            ProjectID: issue.project,
             Description: issue.description ?? null,
             Summary: issue.summary,
             Estimation: issue.storyPoints,
@@ -121,9 +126,10 @@ const CreateIssueDialog = ({
                 <LabelSelectField
                   label="Project"
                   name="project"
-                  data={projects.map((p) => {
-                    return { key: p.project?.ID, value: p.project?.Name };
-                  })}
+                  data={projects.map((p) => ({
+                    key: p.project?.ID,
+                    value: p.project?.Name,
+                  }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                   onChange={(selectedOption) => {
                     const selectedProject = Number(selectedOption.target.value);
@@ -132,6 +138,8 @@ const CreateIssueDialog = ({
                       sprints.filter((s) => s.Project === selectedProject)
                     );
                   }}
+                  value={selectedProject}
+                  defaultValue=""
                 />
                 <LabelInputField label="Summary" name="summary" type="text" />
                 <LabelInputField
@@ -143,27 +151,32 @@ const CreateIssueDialog = ({
                 <LabelSelectField
                   label="Sprint"
                   name="sprint"
-                  data={sprintsToSelect.map((s) => {
-                    return { key: s.ID, value: s.Name };
-                  })}
+                  data={sprintsToSelect.map((s) => ({
+                    key: s.ID,
+                    value: s.Name,
+                  }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <LabelSelectField
                   label="Label"
                   name="label"
-                  data={getLabels().map((l) => {
-                    return { key: l.ID, value: l.Name };
-                  })}
+                  data={getLabels().map((l) => ({ key: l.ID, value: l.Name }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <LabelSelectField
                   label="Assignee"
                   name="assignee"
                   data={projects
-                    .filter((p) => p.project?.ID == selectedProject && p.user)
-                    .map((p) => {
-                      return { key: p.user?.ID, value: p.user?.Name };
-                    })}
+                    .filter(
+                      (p) =>
+                        p.project?.ID == selectedProject && p.project.Members
+                    )
+                    .map((p) => [...p.project.Members])
+                    .flat()
+                    .map((u) => ({
+                      key: u.User.ID,
+                      value: u.User.Name
+                    }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
                 <div className="grid grid-cols-2 grid-rows-5">
@@ -172,7 +185,7 @@ const CreateIssueDialog = ({
                     {...form.register("description")}
                     className="min-w-[180px] flex-grow p-2 rounded-md row-span-5"
                     placeholder="Enter description..."
-                  ></textarea>
+                  />
                 </div>
               </div>
               <DialogFooter>

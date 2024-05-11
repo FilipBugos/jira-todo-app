@@ -23,13 +23,17 @@ export const FormSelectField = ({
     register,
     formState: { errors }
   } = useFormContext();
-
+  console.log(data);
   return (
     <label htmlFor={name} className="form-control w-full min-w-[230px]">
       <select {...register(name)} className={cn(className)} {...selectProps}>
-        <option selected />
+        {!selectProps.value && <option selected />}
         {data.map((d) => (
-          <option key={d.key} value={d.key}>
+          <option
+            selected={d.key === selectProps?.value}
+            key={d.key}
+            value={d.key}
+          >
             {d.value}
           </option>
         ))}
