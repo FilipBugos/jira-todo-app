@@ -1,22 +1,16 @@
 import { relations, sql } from "drizzle-orm";
-import {
-  foreignKey,
-  primaryKey,
-  sqliteTable,
-  text,
-  integer,
-} from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("User", {
   ID: integer("id").primaryKey(),
   Name: text("name").notNull(),
-  Password: text("password").notNull(),
+  Password: text("password").notNull()
 });
 
 export const userRelations = relations(user, ({ many }) => ({
   Projects: many(userProject),
   AssignedIssues: many(issue),
-  CreatedIssues: many(issue),
+  CreatedIssues: many(issue)
 }));
 
 export const project = sqliteTable("Project", {
@@ -28,14 +22,14 @@ export const project = sqliteTable("Project", {
   ),
   CreatedBy: integer("created-by")
     .references(() => user.ID)
-    .notNull(),
+    .notNull()
 });
 
 export const projectRelations = relations(project, ({ one, many }) => ({
   CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.ID] }),
   Members: many(userProject),
   Sprints: many(sprint),
-  Issues: many(issue),
+  Issues: many(issue)
 }));
 
 export const sprint = sqliteTable("Sprint", {
@@ -45,12 +39,12 @@ export const sprint = sqliteTable("Sprint", {
   EndDate: integer("start-date", { mode: "timestamp" }),
   Project: integer("project-id")
     .references(() => project.ID)
-    .notNull(),
+    .notNull()
 });
 
 export const sprintRelations = relations(sprint, ({ one, many }) => ({
   Project: one(project, { fields: [sprint.Project], references: [project.ID] }),
-  Issues: many(issue),
+  Issues: many(issue)
 }));
 
 export const userProject = sqliteTable("UserProject", {
@@ -61,7 +55,7 @@ export const userProject = sqliteTable("UserProject", {
   Project: integer("project-id")
     .references(() => project.ID)
     .notNull(),
-  Role: text("role").notNull(),
+  Role: text("role").notNull()
 });
 
 export const userProjectRelations = relations(userProject, ({ one }) => ({
@@ -89,7 +83,7 @@ export const issue = sqliteTable("Issue", {
   SprintID: integer("sprint-id").references(() => sprint.ID),
   ProjectID: integer("project-id")
     .references(() => project.ID)
-    .notNull(),
+    .notNull()
 });
 
 export const issueRelations = relations(issue, ({ one }) => ({

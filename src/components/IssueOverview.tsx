@@ -1,30 +1,17 @@
 "use client";
 
-import { eq } from "drizzle-orm";
 import { FormProvider, useForm } from "react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { getIssue, updateIssue } from "@/actions/issueActions";
-import { FormInput } from "@/components/form-fields/form-input";
+import { updateIssue } from "@/actions/issueActions";
 import EditableText from "@/components/form-fields/editable-text";
-import { FormSelectField } from "@/components/form-fields/form-select";
 import { LabelSelectField } from "@/components/form-fields/label-select-field";
 import { type SprintsWithUsers } from "@/actions/sprintActions";
 import { type ProjectsWithUsers } from "@/actions/projectActions";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { LabelInputField } from "@/components/form-fields/label-input-field";
 import { getLabels } from "@/lib/utils";
 
 import {
   type InsertIssue,
-  issue,
   type SelectIssue,
   type SelectSprint
 } from "../../db/schema";
@@ -67,7 +54,7 @@ export const IssueOverview = ({
               name="project"
               data={projects.map((p) => ({
                 key: p.project?.ID,
-                value: p.project?.Name,
+                value: p.project?.Name
               }))}
               className="min-w-[230px] flex-grow p-2 rounded-md"
               onChange={(selectedOption) => {
@@ -116,7 +103,7 @@ export const IssueOverview = ({
               name="sprint"
               data={sprintsToSelect.map((s) => ({
                 key: s.ID,
-                value: s.Name,
+                value: s.Name
               }))}
               onChange={(selectedOption) => {
                 const selectedSprint = Number(selectedOption.target.value);

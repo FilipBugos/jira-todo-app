@@ -3,8 +3,9 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { type ClassValue } from "clsx";
+
 import { cn } from "@/lib/cn";
-import { ClassValue } from "clsx";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -118,8 +119,9 @@ export {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
+  DialogDescription
 };
+
 function twMerge(arg0: any) {
   throw new Error("Function not implemented.");
 }

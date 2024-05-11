@@ -44,7 +44,7 @@ const EditableText = ({
           )}
           {...register(name, {
             onChange: handleInputChange,
-            onBlur: handleInputBlur,
+            onBlur: handleInputBlur
           })}
           autoFocus
           {...props}

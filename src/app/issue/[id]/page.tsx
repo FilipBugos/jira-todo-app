@@ -1,23 +1,13 @@
 // show page where is form with editable text component fields
 import React from "react";
-import { FormProvider, useForm } from "react-hook-form";
 import { eq } from "drizzle-orm";
 
-import { FormInput } from "@/components/form-fields/form-input";
-import EditableText from "@/components/form-fields/editable-text";
 import { getIssue } from "@/actions/issueActions";
 import { IssueOverview } from "@/components/IssueOverview";
 import { getAllUserProjects } from "@/actions/projectActions";
-import { getSprint, getSprintsOfUser } from "@/actions/sprintActions";
-import { getUser } from "@/actions/userActions";
+import { getSprintsOfUser } from "@/actions/sprintActions";
 
-import {
-  type InsertIssue,
-  issue,
-  type SelectIssue,
-  user,
-  userProject,
-} from "../../../../db/schema";
+import { issue } from "../../../../db/schema";
 
 type IssueOverviewPageProps = {
   params: {

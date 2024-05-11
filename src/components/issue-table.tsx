@@ -4,8 +4,6 @@ import { useRef } from "react";
 
 import { type IssueJoined } from "@/actions/issueActions";
 
-import { SelectIssue } from "../../db/schema";
-
 import IssueComponent, { type HiddenColumnsType } from "./issue-component";
 
 type IssueTableProps = {
@@ -26,7 +24,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
   issues,
   onDropIssue,
   tableName,
-  hiddenColumns,
+  hiddenColumns
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -40,7 +38,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
         return;
       }
       onDropIssue(item.id, item.fromTableName);
-    },
+    }
   });
 
   drop(ref);

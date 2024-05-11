@@ -35,7 +35,7 @@ export function getLabels() {
     { ID: 6, Name: "Help Wanted" },
     { ID: 7, Name: "Good First Issue" },
     { ID: 8, Name: "Question" },
-    { ID: 9, Name: "Wontfix" },
+    { ID: 9, Name: "Wontfix" }
   ];
 }
 
@@ -44,6 +44,6 @@ export function getStatuses() {
   return [
     { ID: 1, Name: "Open" },
     { ID: 2, Name: "In Progress" },
-    { ID: 3, Name: "Done" },
+    { ID: 3, Name: "Done" }
   ];
 }

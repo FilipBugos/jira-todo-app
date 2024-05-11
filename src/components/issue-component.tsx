@@ -1,12 +1,10 @@
 "use client";
 import React, { memo, useRef } from "react";
 import { type DragSourceMonitor, useDrag } from "react-dnd";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { type IssueJoined } from "@/actions/issueActions";
 import { convertLabelIdToLabelName } from "@/lib/utils";
-
-import { SelectIssue } from "../../db/schema";
 
 type IssueProps = {
   issue: IssueJoined;
@@ -42,7 +40,7 @@ const hiddenColums = [
   "AssignedTo",
   "Estimation",
   "Label",
-  "Sprint",
+  "Sprint"
 ] as const;
 
 type HiddenColumnsType = (typeof hiddenColums)[number];
@@ -50,7 +48,7 @@ type HiddenColumnsType = (typeof hiddenColums)[number];
 const IssueComponent: React.FC<IssueProps> = ({
   issue,
   tableName,
-  hiddenColumns = [],
+  hiddenColumns = []
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -62,11 +60,11 @@ const IssueComponent: React.FC<IssueProps> = ({
     type: "issue",
     item: {
       id: issue.ID,
-      fromTableName: tableName,
+      fromTableName: tableName
     },
     collect: (monitor: DragSourceMonitor) => ({
-      isDragging: !!monitor.isDragging(),
-    })
+      isDragging: !!monitor.isDragging()
+    }),
   });
 
   const router = useRouter();

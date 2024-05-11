@@ -1,12 +1,10 @@
 import { eq } from "drizzle-orm";
-import { Link } from "lucide-react";
 
 import { getAllUserProjects } from "@/actions/projectActions";
 import { getUser } from "@/actions/userActions";
-import { getSprint, getSprintsOfUser } from "@/actions/sprintActions";
 
 import CreateIssueDialog from "../create-issue-dialog";
-import { sprint, user, userProject } from "../../../db/schema";
+import { user } from "../../../db/schema";
 import CreateProjectDialog from "../create-project-dialog";
 
 import { PageLink } from "./page-link";
