@@ -1,17 +1,16 @@
 "use client";
-import { type DropTargetMonitor, useDrop } from "react-dnd";
+import { DropTargetMonitor, useDrop } from "react-dnd";
+import { SelectIssue } from "../../../db/schema";
+import IssueComponent, { HiddenColumnsType } from "./issue-component";
 import { useRef } from "react";
+import { IssueJoined } from "@/actions/issueActions";
 
-import { type IssueJoined } from "@/actions/issueActions";
-
-import IssueComponent, { type HiddenColumnsType } from "./issue-component";
-
-type IssueTableProps = {
+interface IssueTableProps {
   issues: IssueJoined[];
-  onDropIssue: (id: number, toTable: string) => void;
-  tableName: string;
+  onDropIssue?: (id: number, toTable: string) => void;
+  tableName?: string;
   hiddenColumns?: HiddenColumnsType[];
-};
+}
 
 /**
  *
@@ -24,7 +23,7 @@ const IssueTable: React.FC<IssueTableProps> = ({
   issues,
   onDropIssue,
   tableName,
-  hiddenColumns
+  hiddenColumns,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -34,11 +33,11 @@ const IssueTable: React.FC<IssueTableProps> = ({
       item: { id: number; fromTableName: string },
       monitor: DropTargetMonitor
     ) => {
-      if (monitor.didDrop()) {
+      if (monitor.didDrop() || !onDropIssue) {
         return;
       }
       onDropIssue(item.id, item.fromTableName);
-    }
+    },
   });
 
   drop(ref);
@@ -48,6 +47,9 @@ const IssueTable: React.FC<IssueTableProps> = ({
       ref={ref}
       className="bg-gray-100 p-4 rounded-lg shadow  border border-gray-300 my-2"
     >
+      {issues.length === 0 && (
+        <p className="text-center text-gray-500">No issues</p>
+      )}
       {issues.map((issue) => (
         <IssueComponent
           key={issue.ID}
