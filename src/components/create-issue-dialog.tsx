@@ -106,7 +106,7 @@ const CreateIssueDialog = ({
     <FormProvider {...form}>
       <form>
         <div className="">
-          <Dialog>
+          <Dialog onOpenChange={reset}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent
               onInteractOutside={(e) => {

@@ -4,6 +4,7 @@ import { alias } from "drizzle-orm/sqlite-core";
 import {db} from "../../db/db";
 import {InsertProject, InsertUserProject, project, sprint, user, userProject} from "../../db/schema";
 import {and, eq, or, SQL} from "drizzle-orm";
+import { createSprint } from "./sprintActions";
 
 export type ProjectWithUserProjecs = {
 	Project: InsertProject,
@@ -21,8 +22,16 @@ export const createProject = async (data: InsertProject) => {
 	return await db.insert(project).values(data);
 }
 
-export const createProjectWithUserProject = async (data: ProjectWithUserProjecs) => {
+export const createProjectFromDialog = async (data: ProjectWithUserProjecs) => {
+	// TODO: all of these should be transactional
+	
+	// insert project
 	const projectEntity = await db.insert(project).values(data.Project);
+	
+	// create backlog for the project
+	await createSprint({Project: Number(projectEntity.lastInsertRowid), Name: "Backlog", StartDate: data.Project.CreatedTime });
+
+	// insert roles
 	data.UserProjectEntities.length > 0 ? await db
 									.insert(userProject)
 									.values(data.UserProjectEntities.map(up => { 

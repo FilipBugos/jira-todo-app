@@ -17,7 +17,7 @@ import { FormInput } from './form-fields/form-input';
 import { useState } from 'react';
 import { SelectUser } from '../../db/schema';
 import { AddParticipantToProject, ParticipantsType } from './add-participant-to-project-form';
-import { createProjectWithUserProject, ProjectWithUserProjecs } from '@/actions/projectActions';
+import { createProjectFromDialog, ProjectWithUserProjecs } from '@/actions/projectActions';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import revalidateRootLayout from '@/common/revalidate';
@@ -36,9 +36,11 @@ const formSchema = z.object({
 export type CreateProjectSchema = z.infer<typeof formSchema>;
 
 const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
-    const [ participants, setParticipants ] = useState<ParticipantsType[]>([]);
-    const [ userEntities, setUsers] = useState<SelectUser[]>(users);
-    const router = useRouter();
+  // TODO: change this once auth is done
+  const loggedInUser = 1;
+  const [ participants, setParticipants ] = useState<ParticipantsType[]>([]);
+  const [ userEntities, setUsers] = useState<SelectUser[]>(users);
+  const router = useRouter();
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(formSchema),
@@ -63,16 +65,16 @@ const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
               Name: userProject.name,
               Description: userProject.description,
             },
-            UserProjectEntities: participants.map((p) => {
+            UserProjectEntities: [...(participants.map((p) => {
               return {
                 User: p.user.id,
                 Role: p.role,
               };
-            }),
+            })), {User: loggedInUser, Role: "owner"}],
           };
 
                 try {
-                    await createProjectWithUserProject(entity);
+                    await createProjectFromDialog(entity);
                     toast.success('Project was successfully created');
                     revalidateRootLayout();
                     reset();
@@ -103,7 +105,7 @@ const CreateProjectDialog = ({users, trigger}: CreateProjectDialogType) => {
         <FormProvider {...form}>
             <form onSubmit={() => console.log('here2')}>
                 <div className=''>
-                    <Dialog>
+                    <Dialog onOpenChange={reset}>
                         <DialogTrigger asChild>
                             {trigger}
                         </DialogTrigger>

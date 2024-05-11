@@ -6,6 +6,7 @@ import { getUser } from "@/actions/userActions";
 import avatar from "@/assets/avatar.png";
 
 export default async function Home() {
+  // TODO: change this once auth is done
   const loggedInUser = 1;
   // TODO: cut the list of projects/issues based on the relevance
   const projects = await getAllUserProjects([eq(user.ID, loggedInUser)]);
