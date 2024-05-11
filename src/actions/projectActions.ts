@@ -4,6 +4,8 @@ import { alias } from "drizzle-orm/sqlite-core";
 import { and, eq, type SQL } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
+import { createSprint } from "@/actions/sprintActions";
+
 import { db } from "../../db/db";
 import {
   type InsertProject,
@@ -11,7 +13,7 @@ import {
   project,
   sprint,
   user,
-  userProject,
+  userProject
 } from "../../db/schema";
 
 export type ProjectWithUserProjecs = {
@@ -31,10 +33,20 @@ export const getProject = async (filters?: SQL[]) =>
 export const createProject = async (data: InsertProject) =>
   await db.insert(project).values(data);
 
-export const createProjectWithUserProject = async (
-  data: ProjectWithUserProjecs
-) => {
+export const createProjectFromDialog = async (data: ProjectWithUserProjecs) => {
+  // TODO: all of these should be transactional
+
+  // insert project
   const projectEntity = await db.insert(project).values(data.Project);
+
+  // create backlog for the project
+  await createSprint({
+    Project: Number(projectEntity.lastInsertRowid),
+    Name: "Backlog",
+    StartDate: data.Project.CreatedTime
+  });
+
+  // insert roles
   data.UserProjectEntities.length > 0
     ? await db.insert(userProject).values(
         data.UserProjectEntities.map((up) => ({
@@ -43,7 +55,7 @@ export const createProjectWithUserProject = async (
         }))
       )
     : undefined;
-  revalidatePath("/");
+
   return projectEntity;
 };
 

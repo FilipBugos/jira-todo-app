@@ -63,7 +63,7 @@ export const AddParticipantToProject = ({
 
     return (
         <FormProvider {...form}>
-            <div className="grid grid-cols-3 gap-10">
+            <div className="flex flex-row gap-10">
                 <FormSelectField
                     data={data}
                     name='user'

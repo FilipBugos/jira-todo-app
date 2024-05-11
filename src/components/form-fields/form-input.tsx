@@ -16,7 +16,8 @@ export const FormInput = ({
 		formState: { errors }
 	} = useFormContext();
     
-    return (<label htmlFor={name} className="form-control w-full">
+    return (<div className="form-control w-full">
+			<div className='flex flex-col'>
 			<input
 				id={name}
 				className={cn(
@@ -33,5 +34,6 @@ export const FormInput = ({
 					{errors[name]?.message?.toString()}
 				</span>
 			)}
-		</label>);
+			</div>
+		</div>);
 };
