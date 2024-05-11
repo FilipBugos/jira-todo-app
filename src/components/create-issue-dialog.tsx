@@ -38,7 +38,7 @@ const formSchema = z.object({
     .min(3, { message: "Issue has to contain summary." })
     .default(""),
   description: z.string().optional().default(""),
-  sprint: z.string().optional().transform(Number).default(""),
+  sprint: z.string().min(1, { message: "Issue has to be assigned to sprint or backlog." }).transform(Number).default(""),
   label: z.string().optional().transform(Number).default(""),
   assignee: z.string().optional().transform(Number).default(""),
   storyPoints: z.string().optional().transform(Number).default(""),
@@ -80,7 +80,7 @@ const CreateIssueDialog = ({
             CreatedTime: new Date(),
             Label: issue.label,
             Status: getStatuses().at(0)?.Name,
-            ...(issue.sprint && { SprintID: issue.sprint }),
+            SprintID: issue.sprint,
             ...(issue.assignee && { AssignedTo: issue.assignee }),
           };
 
