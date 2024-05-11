@@ -1,15 +1,18 @@
 "use client";
 import React, { memo, useRef } from "react";
-import { SelectIssue } from "../../db/schema";
-import { DragSourceMonitor, useDrag } from "react-dnd";
-import { IssueJoined } from "@/actions/issueActions";
+import { type DragSourceMonitor, useDrag } from "react-dnd";
+import { redirect, useRouter } from "next/navigation";
+
+import { type IssueJoined } from "@/actions/issueActions";
 import { convertLabelIdToLabelName } from "@/lib/utils";
 
-interface IssueProps {
+import { SelectIssue } from "../../db/schema";
+
+type IssueProps = {
   issue: IssueJoined;
   tableName: string;
   hiddenColumns?: HiddenColumnsType[];
-}
+};
 
 type DragAndDropItem = {
   id: number;
@@ -63,16 +66,19 @@ const IssueComponent: React.FC<IssueProps> = ({
     },
     collect: (monitor: DragSourceMonitor) => ({
       isDragging: !!monitor.isDragging(),
-    }),
+    })
   });
+
+  const router = useRouter();
 
   drag(ref);
   return (
     <div
-      className={`flex flex-row items-center bg-white shadow-lg rounded-lg p-4 mb-4 ${
+      className={`flex flex-row items-center bg-white shadow-lg rounded-lg p-4 mb-4  hover:bg-gray-300 ${
         isDragging ? "bg-gray-200" : ""
       }`}
       ref={ref}
+      onClick={() => router.push(`/issue/${issue.ID}`)}
     >
       {hiddenColumns.includes("ID") ? null : (
         <div
