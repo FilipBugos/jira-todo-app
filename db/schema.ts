@@ -61,6 +61,9 @@ export const issue = sqliteTable("Issue", {
   Estimation: integer("estimation"),
   Label: integer("label"),
   SprintID: integer("sprint-id").references(() => sprint.ID),
+  ProjectID: integer("project-id")
+    .references(() => project.ID)
+    .notNull(),
 });
 
 export type InsertUser = typeof user.$inferInsert;
