@@ -38,7 +38,7 @@ export default async function TopNavBar() {
              users={users} />
         </div>
         <div className="m-3">
-                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="...">Profile</PageLink>
+                <PageLink className="hover:bg-slate-400 hover:rounded-md p-2" href="/profile">Profile</PageLink>
         </div>
       </div>
     </>

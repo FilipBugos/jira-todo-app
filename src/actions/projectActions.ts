@@ -39,6 +39,7 @@ export const getAllUserProjects = async (filters?: SQL[]) => {
 	const projectsWithUsers =  await db
 		.select()
 		.from(userProject)
+		// TODO: next line is a mistake
 		.leftJoin(userProject2, eq(userProject.ID, userProject2.ID))
 		.leftJoin(project, eq(project.ID, userProject.Project))
 		.leftJoin(user, or(eq(user.ID, userProject2.User), eq(user.ID, project.CreatedBy)))
@@ -47,6 +48,7 @@ export const getAllUserProjects = async (filters?: SQL[]) => {
 
 	return projectsWithUsers.map((project) => ({
 		project: project.Project,
+		userProject: project.UserProject,
 		user: project.User,
 	}));
 };
