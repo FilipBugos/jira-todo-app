@@ -1,20 +1,19 @@
 "use client";
 import React, { memo, useRef } from "react";
-import { type DragSourceMonitor, useDrag } from "react-dnd";
-import { useRouter } from "next/navigation";
-
-import { type IssueJoined } from "@/actions/issueActions";
+import { SelectIssue } from "../../../db/schema";
+import { DragSourceMonitor, useDrag } from "react-dnd";
+import { IssueJoined } from "@/actions/issueActions";
 import { convertLabelIdToLabelName } from "@/lib/utils";
 
-type IssueProps = {
+interface IssueProps {
   issue: IssueJoined;
-  tableName: string;
+  tableName?: string;
   hiddenColumns?: HiddenColumnsType[];
-};
+}
 
 type DragAndDropItem = {
   id: number;
-  fromTableName: string;
+  fromTableName?: string;
 };
 
 type DragAndDropItemCollectType = {
@@ -40,7 +39,7 @@ const hiddenColums = [
   "AssignedTo",
   "Estimation",
   "Label",
-  "Sprint"
+  "Sprint",
 ] as const;
 
 type HiddenColumnsType = (typeof hiddenColums)[number];
@@ -48,7 +47,7 @@ type HiddenColumnsType = (typeof hiddenColums)[number];
 const IssueComponent: React.FC<IssueProps> = ({
   issue,
   tableName,
-  hiddenColumns = []
+  hiddenColumns = [],
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -60,53 +59,38 @@ const IssueComponent: React.FC<IssueProps> = ({
     type: "issue",
     item: {
       id: issue.ID,
-      fromTableName: tableName
+      fromTableName: tableName,
     },
     collect: (monitor: DragSourceMonitor) => ({
-      isDragging: !!monitor.isDragging()
+      isDragging: !!monitor.isDragging(),
     }),
   });
-
-  const router = useRouter();
 
   drag(ref);
   return (
     <div
-      className={`flex flex-row items-center bg-white shadow-lg rounded-lg p-4 mb-4  hover:bg-gray-300 ${
+      className={`flex flex-row items-center bg-white shadow-lg rounded-lg p-4 mb-4 ${
         isDragging ? "bg-gray-200" : ""
       }`}
       ref={ref}
-      onClick={() => router.push(`/issue/${issue.ID}`)}
     >
-      {hiddenColumns.includes("ID") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 5%" }}
-        >
+      {!hiddenColumns.includes("ID") && (
+        <div className="flex-grow-0 flex-shrink-0 w-1/20 items-center justify-center border-r border-black px-1">
           {issue.ID}
         </div>
       )}
-      {hiddenColumns.includes("Description") ? null : (
-        <div
-          className="flex items-center justify-center overflow-hidden"
-          style={{ flex: "1 1 auto" }}
-        >
+      {!hiddenColumns.includes("Description") && (
+        <div className="flex-grow flex-shrink items-center justify-center overflow-hidden w-7/12 border-r border-black px-1">
           {issue.Description}
         </div>
       )}
-      {hiddenColumns.includes("Summary") ? null : (
-        <div
-          className="flex items-center justify-center overflow-hidden whitespace-nowrap"
-          style={{ flex: "0 1 15%" }}
-        >
+      {!hiddenColumns.includes("Summary") && (
+        <div className="flex-grow items-center justify-center w-2/10 border-r border-black px-1">
           {issue.Summary}
         </div>
       )}
-      {hiddenColumns.includes("Status") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
+      {!hiddenColumns.includes("Status") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
           <span
             className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor(
               issue.Status
@@ -116,52 +100,34 @@ const IssueComponent: React.FC<IssueProps> = ({
           </span>
         </div>
       )}
-      {hiddenColumns.includes("CreatedTime") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
+      {!hiddenColumns.includes("CreatedTime") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
           Created at: {issue.CreatedTime?.toLocaleDateString()}
         </div>
       )}
-      {hiddenColumns.includes("CreatedBy") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
+      {!hiddenColumns.includes("CreatedBy") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
           Author: {issue.CreatedBy?.Name}
         </div>
       )}
-      {hiddenColumns.includes("AssignedTo") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
+      {!hiddenColumns.includes("AssignedTo") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
           Assignee: {issue.AssignedTo?.Name}
         </div>
       )}
-      {hiddenColumns.includes("Estimation") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
+      {!hiddenColumns.includes("Estimation") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
           Estimate: {issue.Estimation ? `${issue.Estimation}h` : ""}
         </div>
       )}
-      {hiddenColumns.includes("Label") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
-          {convertLabelIdToLabelName(issue.Label)}
+      {!hiddenColumns.includes("Sprint") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 border-r border-black px-1">
+          Sprint: {issue.Sprint?.Name ?? "None"}
         </div>
       )}
-      {hiddenColumns.includes("Sprint") ? null : (
-        <div
-          className="flex items-center justify-center"
-          style={{ flex: "0 0 10%" }}
-        >
-          Sprint: {issue.Sprint?.Name ?? "None"}
+      {!hiddenColumns.includes("Label") && (
+        <div className="flex-grow-0 flex-shrink-0 items-center justify-center w-1/10 px-1">
+          {convertLabelIdToLabelName(issue.Label)}
         </div>
       )}
     </div>
