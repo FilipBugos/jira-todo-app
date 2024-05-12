@@ -129,7 +129,7 @@ const IssueComponent: React.FC<IssueProps> = ({
           className="flex items-center justify-center"
           style={{ flex: "0 0 10%" }}
         >
-          Author: {issue.CreatedBy?.Name}
+          Author: {issue.CreatedBy?.name}
         </div>
       )}
       {hiddenColumns.includes("AssignedTo") ? null : (
@@ -137,7 +137,7 @@ const IssueComponent: React.FC<IssueProps> = ({
           className="flex items-center justify-center"
           style={{ flex: "0 0 10%" }}
         >
-          Assignee: {issue.AssignedTo?.Name}
+          Assignee: {issue.AssignedTo?.name}
         </div>
       )}
       {hiddenColumns.includes("Estimation") ? null : (

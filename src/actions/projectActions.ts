@@ -63,13 +63,13 @@ export const getAllUserProjects = async (userID: number) => {
       Members: {
         with: {
           User: true
-        },
+        }
       },
       Sprints: true
-    },
+    }
   });
   return projectsWithUsers
-    .filter((p) => p.Members.some((m) => m.User.ID === userID))
+    .filter((p) => p.Members.some((m) => m.User.id === userID))
     .map((project) => ({
       project
     }));

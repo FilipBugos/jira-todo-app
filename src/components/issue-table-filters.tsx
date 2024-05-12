@@ -61,11 +61,11 @@ const IssueTableFilters = ({
           ) &&
           (filters.createdByFilter.length === 0 ||
             filters.createdByFilter.some(
-              (opt) => opt.value === issue.CreatedBy?.ID,
+              (opt) => opt.value === issue.CreatedBy?.id,
             )) &&
           (filters.assignedToFilter.length === 0 ||
             filters.assignedToFilter.some(
-              (opt) => opt.value === issue.AssignedTo?.ID,
+              (opt) => opt.value === issue.AssignedTo?.id,
             )) &&
           (filters.statusFilter.length === 0 ||
             filters.statusFilter.some(

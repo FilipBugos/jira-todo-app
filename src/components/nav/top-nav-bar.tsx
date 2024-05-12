@@ -11,10 +11,10 @@ import { PageLink } from "./page-link";
 
 export default async function TopNavBar() {
   const loggedInUserId = 1;
-  const loggedInUser = (await getUser([eq(user.ID, loggedInUserId)])).at(0);
+  const loggedInUser = (await getUser([eq(user.id, loggedInUserId)])).at(0);
   const allUserProject = await getAllUserProjects(loggedInUserId);
   console.log(`AllUserProject: ${allUserProject}`);
-  console.log(`LoggedInUser: ${loggedInUser?.ID}`);
+  console.log(`LoggedInUser: ${loggedInUser?.id}`);
   if (!loggedInUser) {
     <div>Error</div>;
   }
