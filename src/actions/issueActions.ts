@@ -25,8 +25,8 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
   const issues = await db
     .select()
     .from(issue)
-    .leftJoin(creator, eq(creator.ID, issue.CreatedBy))
-    .leftJoin(assigne, eq(assigne.ID, issue.AssignedTo))
+    .leftJoin(creator, eq(creator.id, issue.CreatedBy))
+    .leftJoin(assigne, eq(assigne.id, issue.AssignedTo))
     .leftJoin(sprint, eq(sprint.ID, issue.SprintID))
     .where(filters ? and(...filters) : undefined)
     .execute();

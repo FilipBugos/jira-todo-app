@@ -22,8 +22,8 @@ export const user = sqliteTable("user", {
 
 export const userRelations = relations(user, ({ many }) => ({
   Projects: many(userProject),
-  AssignedIssues: many(issue),
-  CreatedIssues: many(issue),
+  createdByUser: many(issue, { relationName: "createdByUser" }),
+  assignedToUser: many(issue, { relationName: "assignedToUser" })
 }));
 
 export const accounts = sqliteTable(
@@ -46,7 +46,7 @@ export const accounts = sqliteTable(
   (account) => ({
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
-    }),
+    })
   }),
 );
 
@@ -67,7 +67,7 @@ export const verificationTokens = sqliteTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
+  })
 );
 
 export const project = sqliteTable("Project", {
@@ -120,7 +120,7 @@ export const userProjectRelations = relations(userProject, ({ one }) => ({
   Project: one(project, {
     fields: [userProject.Project],
     references: [project.ID],
-  }),
+  })
 }));
 
 export const issue = sqliteTable("Issue", {
@@ -144,13 +144,21 @@ export const issue = sqliteTable("Issue", {
 });
 
 export const issueRelations = relations(issue, ({ one }) => ({
-  CreatedBy: one(user, { fields: [issue.CreatedBy], references: [user.id] }),
-  AssignedTo: one(user, { fields: [issue.AssignedTo], references: [user.id] }),
+  CreatedBy: one(user, {
+    fields: [issue.CreatedBy],
+    references: [user.id],
+    relationName: "createdByUser",
+  }),
+  AssignedTo: one(user, {
+    fields: [issue.AssignedTo],
+    references: [user.id],
+    relationName: "assignedToUser",
+  }),
   Sprint: one(sprint, { fields: [issue.SprintID], references: [sprint.ID] }),
   Project: one(project, {
     fields: [issue.ProjectID],
     references: [project.ID],
-  }),
+  })
 }));
 
 export type InsertUser = typeof user.$inferInsert;
