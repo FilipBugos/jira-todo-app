@@ -78,7 +78,7 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
 												Description: foundItem.Description,
 												Status: foundItem.Status,
 												CreatedTime: foundItem.CreatedTime,
-												CreatedBy: foundItem.CreatedBy?.id,
+												CreatedBy: foundItem.CreatedBy.id,
 												AssignedTo: foundItem.AssignedTo?.id,
 												Estimation: foundItem.Estimation,
 												Label: foundItem.Label,

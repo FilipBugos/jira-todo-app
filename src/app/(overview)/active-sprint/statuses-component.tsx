@@ -79,7 +79,7 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 										Description: foundItem.Description,
 										Status: key.Name, // new status
 										CreatedTime: foundItem.CreatedTime,
-										CreatedBy: foundItem.CreatedBy?.id,
+										CreatedBy: foundItem.CreatedBy.id,
 										AssignedTo: foundItem.AssignedTo?.id,
 										Estimation: foundItem.Estimation,
 										Label: foundItem.Label,
