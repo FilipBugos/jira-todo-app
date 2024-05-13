@@ -1,10 +1,23 @@
 import { relations, sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  primaryKey,
+  integer,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+import type { AdapterAccount } from "next-auth/adapters";
 
-export const user = sqliteTable("User", {
-  id: integer("id").primaryKey(),
+export const user = sqliteTable("user", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  username: text("username").notNull().unique(),
   name: text("name").notNull(),
-  password: text("password").notNull()
+  email: text("email").notNull().unique(),
+  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
+  image: text("image"),
+  role: text("role").notNull().default("user"),
+  password: text("password").notNull(),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -13,23 +26,67 @@ export const userRelations = relations(user, ({ many }) => ({
   assignedToUser: many(issue, { relationName: "assignedToUser" })
 }));
 
+export const accounts = sqliteTable(
+  "account",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    })
+  }),
+);
+
+export const sessions = sqliteTable("session", {
+  sessionToken: text("sessionToken").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+});
+
+export const verificationTokens = sqliteTable(
+  "VerificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  })
+);
+
 export const project = sqliteTable("Project", {
   ID: integer("id").primaryKey(),
   Name: text("name").notNull().default(""),
   Description: text("description"),
   CreatedTime: integer("start-date", { mode: "timestamp" }).default(
-    sql`(CURRENT_TIMESTAMP)`
+    sql`(CURRENT_TIMESTAMP)`,
   ),
   CreatedBy: integer("created-by")
     .references(() => user.id)
-    .notNull()
+    .notNull(),
 });
 
 export const projectRelations = relations(project, ({ one, many }) => ({
   CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.id] }),
   Members: many(userProject),
   Sprints: many(sprint),
-  Issues: many(issue)
+  Issues: many(issue),
 }));
 
 export const sprint = sqliteTable("Sprint", {
@@ -39,12 +96,12 @@ export const sprint = sqliteTable("Sprint", {
   EndDate: integer("start-date", { mode: "timestamp" }),
   Project: integer("project-id")
     .references(() => project.ID)
-    .notNull()
+    .notNull(),
 });
 
 export const sprintRelations = relations(sprint, ({ one, many }) => ({
   Project: one(project, { fields: [sprint.Project], references: [project.ID] }),
-  Issues: many(issue)
+  Issues: many(issue),
 }));
 
 export const userProject = sqliteTable("UserProject", {
@@ -55,15 +112,15 @@ export const userProject = sqliteTable("UserProject", {
   Project: integer("project-id")
     .references(() => project.ID)
     .notNull(),
-  Role: text("role").notNull()
+  Role: text("role").notNull(),
 });
 
 export const userProjectRelations = relations(userProject, ({ one }) => ({
   User: one(user, { fields: [userProject.User], references: [user.id] }),
   Project: one(project, {
     fields: [userProject.Project],
-    references: [project.ID]
-  }),
+    references: [project.ID],
+  })
 }));
 
 export const issue = sqliteTable("Issue", {
@@ -72,7 +129,7 @@ export const issue = sqliteTable("Issue", {
   Description: text("description"),
   Status: text("status"),
   CreatedTime: integer("start-date", { mode: "timestamp" }).default(
-    sql`(CURRENT_TIMESTAMP)`
+    sql`(CURRENT_TIMESTAMP)`,
   ),
   CreatedBy: integer("created-by")
     .references(() => user.id)
@@ -83,7 +140,7 @@ export const issue = sqliteTable("Issue", {
   SprintID: integer("sprint-id").references(() => sprint.ID),
   ProjectID: integer("project-id")
     .references(() => project.ID)
-    .notNull()
+    .notNull(),
 });
 
 export const issueRelations = relations(issue, ({ one }) => ({
