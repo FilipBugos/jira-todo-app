@@ -10,11 +10,7 @@ export const verifySession = async () => {
 	const cookie = cookies().get('session')?.value;
 	const session = await decrypt(cookie);
 
-	if (!session?.userId) {
-		redirect('/login');
-	}
-
-	return { isAuth: true, userId: session.userId };
+	return { isAuth: !!session, userId: session?.userId };
 };
 
 export const getUser = async () => {

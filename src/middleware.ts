@@ -5,7 +5,15 @@ import { authConfig } from '../auth.config';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/session';
 
-const protectedRoutes = ['/profile'];
+const protectedRoutes = [
+	'/profile',
+	'/issue',
+	'/projects',
+	'/logout',
+	'/active-sprint',
+	'/all-issues',
+	'/backlog'
+];
 const publicRoutes = ['/login', '/signup', '/'];
 
 export default async function middleware(req: NextRequest) {
@@ -29,9 +37,9 @@ export default async function middleware(req: NextRequest) {
 	if (
 		isPublicRoute &&
 		session?.userId &&
-		!req.nextUrl.pathname.startsWith('/overview')
+		!req.nextUrl.pathname.startsWith('/')
 	) {
-		return NextResponse.redirect(new URL('/overview', req.nextUrl));
+		return NextResponse.redirect(new URL('/', req.nextUrl));
 	}
 
 	return NextResponse.next();

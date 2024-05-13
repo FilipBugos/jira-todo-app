@@ -9,11 +9,17 @@ import {
 	SignupFormSchema,
 	SignupFormSchemaType
 } from '@/lib/definitions';
-import { createUser, getUserByUsername } from '@/actions/userActions';
+import {
+	createUser,
+	getUserById,
+	getUserByUsername
+} from '@/actions/userActions';
 import { db } from '../../db/db';
 import { user } from '../../db/schema';
 import { redirect } from 'next/navigation';
-import { createSession, deleteSession } from '@/lib/session';
+import { createSession, decrypt, deleteSession } from '@/lib/session';
+import { cookies } from 'next/headers';
+import { verifySession } from '@/lib/dal';
 
 export async function authenticate(
 	prevState: string | undefined,
@@ -138,3 +144,14 @@ export async function logout() {
 	deleteSession();
 	redirect('/login');
 }
+
+export const getLoggedInUser = async () => {
+	const { isAuth, userId } = await verifySession();
+	console.log('getLoggedInUserFunc');
+	if (!isAuth || !userId) {
+		return;
+	}
+
+	const loggedInUser = await getUserById(userId);
+	return loggedInUser[0];
+};

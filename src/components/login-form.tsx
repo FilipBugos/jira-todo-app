@@ -10,6 +10,7 @@ import { checkIsUsernameUnique } from '@/actions/userActions';
 import { Button } from './ui/button';
 import { FormInput } from './form-fields/form-input';
 import { SignInFormSchema, SignInFormSchemaType } from '@/lib/definitions';
+import { signIn } from '@/auth';
 
 const LoginForm = () => {
 	const [errorMessage, dispatch] = useFormState(ownSignIn, undefined);

@@ -20,7 +20,8 @@ export const getUserByEmail = async (email: string) => {
 };
 
 export const getUserById = async (id: string) => {
-	await db.select().from(user).where(eq(user.id, id));
+	const result = await db.select().from(user).where(eq(user.id, id));
+	return result;
 };
 
 export const getUserByUsername = async (username: string) => {

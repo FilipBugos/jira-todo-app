@@ -2,22 +2,30 @@ import { eq } from 'drizzle-orm';
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
-import { getUser } from '@/actions/userActions';
+import { getUser, getUserById } from '@/actions/userActions';
 import avatar from '@/assets/avatar.png';
 
 import { issue, user } from '../../../db/schema';
 import { auth } from '@/auth';
 import { getSession } from 'next-auth/react';
-import { getLoggedInUser } from '@auth/core/lib/utils/session';
+import { getLoggedInUser } from '@/actions/authActions';
+import { verifySession } from '@/lib/dal';
+import { authConfig } from '../../../auth.config';
 export default async function Home() {
 	// TODO: change this once auth is done
-	const loggedInUser = getLoggedInUser();
+
+	const loggedInUser = await getLoggedInUser();
+
+	if (!loggedInUser) {
+		return <h1>Not logged in</h1>;
+	}
 
 	console.log(loggedInUser);
+
 	// TODO: cut the list of projects/issues based on the relevance
-	const projects = await getAllUserProjects([eq(user.id, loggedInUser)]);
-	const issues = await getIssuesJoined([eq(issue.AssignedTo, loggedInUser)]);
-	const userEntity = (await getUser([eq(user.id, loggedInUser?.id)])).at(0);
+	const projects = await getAllUserProjects(loggedInUser.id);
+	const issues = await getIssuesJoined([eq(issue.AssignedTo, loggedInUser.id)]);
+	const userEntity = (await getUser([eq(user.id, loggedInUser.id)])).at(0);
 
 	return (
 		<div className="flex flex-col items-center gap-10">
