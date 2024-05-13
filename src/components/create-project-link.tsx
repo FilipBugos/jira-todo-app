@@ -1,15 +1,13 @@
-import CreateIssueDialog from '@/components/create-issue-dialog';
-import { getAllUserProjects } from '@/actions/projectActions';
 import { getUser } from '@/actions/userActions';
 import { getLoggedInUser } from '@/actions/authActions';
 import CreateProjectDialog from '@/components/create-project-dialog';
 
 export const CreateProjectLink = async () => {
 	const loggedInUser = await getLoggedInUser();
-	const allUserProject = await getAllUserProjects(loggedInUser?.id);
 	if (!loggedInUser) {
 		<div>Error</div>;
 	}
+
 	const users = await getUser();
 	return (
 		<div className="m-3">
@@ -20,6 +18,7 @@ export const CreateProjectLink = async () => {
 					</button>
 				}
 				users={users}
+				loggedInUser={loggedInUser}
 			/>
 		</div>
 	);

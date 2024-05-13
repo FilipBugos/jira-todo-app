@@ -2,18 +2,14 @@ import { eq } from 'drizzle-orm';
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
-import { getUser, getUserById } from '@/actions/userActions';
+import { getUser } from '@/actions/userActions';
 import avatar from '@/assets/avatar.png';
+import { getLoggedInUser } from '@/actions/authActions';
 
 import { issue, user } from '../../../db/schema';
-import { auth } from '@/auth';
-import { getSession } from 'next-auth/react';
-import { getLoggedInUser } from '@/actions/authActions';
-import { verifySession } from '@/lib/dal';
-import { authConfig } from '../../../auth.config';
-export default async function Home() {
-	// TODO: change this once auth is done
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, react/function-component-definition
+export default async function Profile() {
 	const loggedInUser = await getLoggedInUser();
 
 	if (!loggedInUser) {
@@ -25,15 +21,18 @@ export default async function Home() {
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
 	const issues = await getIssuesJoined([eq(issue.AssignedTo, loggedInUser.id)]);
-	const userEntity = (await getUser([eq(user.id, loggedInUser.id)])).at(0);
 
 	return (
 		<div className="flex flex-col items-center gap-10">
 			<div>
-				<img className="w-100 h-48 rounded-md object-cover" src={avatar.src} />
+				<img
+					className="w-100 h-48 rounded-md object-cover"
+					alt="avatar"
+					src={avatar.src}
+				/>
 			</div>
 			<div className="self-center">
-				<h1 className="justify-self-center text-4xl">{userEntity?.name}</h1>
+				<h1 className="justify-self-center text-4xl">{loggedInUser?.name}</h1>
 			</div>
 			<div className="w-1/3">
 				<h2 className="text-2xl">Projects</h2>
@@ -58,7 +57,11 @@ export default async function Home() {
 									{p.project?.Name}
 								</label>
 								<label className="w-1/2 text-right text-lg">
-									{p.userProject.Role}
+									{
+										p.project.Members.filter(
+											m => m.User.id === loggedInUser.id
+										).at(0)?.Role
+									}
 								</label>
 							</div>
 						</li>
