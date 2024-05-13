@@ -4,9 +4,13 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Toaster } from "sonner";
 
+import { NextAuthProvider } from "@/providers/session-provider";
 export const Providers = ({ children }: PropsWithChildren) => (
   <DndProvider backend={HTML5Backend}>
-    {children}
-    <Toaster richColors />
+    <NextAuthProvider>
+      {children}
+
+      <Toaster richColors />
+    </NextAuthProvider>
   </DndProvider>
 );
