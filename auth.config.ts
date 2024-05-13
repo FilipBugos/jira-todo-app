@@ -1,4 +1,4 @@
-import { CredentialsSignin, type NextAuthConfig } from "next-auth";
+import { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import Credentials from "next-auth/providers/credentials";
@@ -10,7 +10,7 @@ import { db } from "./db/db";
 import { accounts, sessions, user, verificationTokens } from "./db/schema";
 
 const getIsProtectedPath = (path: string) => {
-  const paths = ["/protected"];
+  const paths = ["/"];
 
   return paths.some((p) => path.startsWith(p));
 };
@@ -52,21 +52,21 @@ export const authConfig = {
   session: { strategy: "database" },
   callbacks: {
     async session({ session, user }) {
+      console.log("session", session, user);
       session.user.id = user.id;
       return session;
     },
     authorized({ auth, request: { nextUrl } }) {
-      console.log("authorized", auth, nextUrl);
       const isLoggedIn = !!auth?.user;
-
       const isProtected = getIsProtectedPath(nextUrl.pathname);
 
-      if (!isLoggedIn && isProtected) {
-        const redirectUrl = new URL("/api/auth/signin", nextUrl.origin);
-        redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
+      // if (!isLoggedIn && isProtected) {
+      //   const redirectUrl = new URL("/login", nextUrl.origin);
+      //   console.log("searchParams", redirectUrl.searchParams);
+      //   redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
 
-        return Response.redirect(redirectUrl);
-      }
+      //   return Response.redirect(redirectUrl);
+      // }
 
       return true;
     },

@@ -1,19 +1,22 @@
+import { useSession } from "next-auth/react";
+
 import { getIssuesJoined, type IssueJoined } from "@/actions/issueActions";
 import PageIssues from "@/components/page-issue-component";
 import { getUser } from "@/actions/userActions";
 import { getLabels, getStatuses } from "@/lib/utils";
 
 export default async function Home() {
+  const { data: session } = useSession();
+  console.log(session);
   const issues = await getIssuesJoined();
   const users = await getUser();
-
   const grouped = issues.reduce(
     (acc: { [key: string | number]: IssueJoined[] }, issue) => {
       acc[issue.SprintID ?? "none"] = acc[issue.SprintID ?? "none"] || [];
       acc[issue.SprintID ?? "none"].push(issue);
       return acc;
     },
-    {}
+    {},
   );
   return (
     <main className="">

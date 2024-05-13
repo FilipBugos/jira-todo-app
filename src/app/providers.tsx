@@ -3,16 +3,14 @@ import { type PropsWithChildren } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Toaster } from "sonner";
+
 import { NextAuthProvider } from "@/providers/session-provider";
 export const Providers = ({ children }: PropsWithChildren) => (
-  (
-    <DndProvider backend={HTML5Backend}>
-      <NextAuthProvider>
+  <DndProvider backend={HTML5Backend}>
+    <NextAuthProvider>
+      {children}
 
-        {children}
-
-        <Toaster richColors />
-      </NextAuthProvider>
-
-    </DndProvider>)
+      <Toaster richColors />
+    </NextAuthProvider>
+  </DndProvider>
 );

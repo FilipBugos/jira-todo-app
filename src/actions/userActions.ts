@@ -1,6 +1,6 @@
 "use server";
 
-import { and, type SQL } from "drizzle-orm";
+import { and, eq, type SQL } from "drizzle-orm";
 
 import { db } from "../../db/db";
 import { type InsertUser, user } from "../../db/schema";
@@ -13,3 +13,27 @@ export const getUser = async (filters?: SQL[]) =>
 
 export const createUser = async (data: InsertUser) =>
   await db.insert(user).values(data);
+
+export const getUserByEmail = async (email: string) => {
+  const result = await db.select().from(user).where(eq(user.email, email));
+  return result;
+};
+
+export const getUserById = async (id: string) => {
+  await db.select().from(user).where(eq(user.id, id));
+};
+
+export const getUserByUsername = async (username: string) => {
+  await db.select().from(user).where(eq(user.username, username));
+};
+
+export async function checkIsUsernameUnique(
+  username: string,
+): Promise<boolean> {
+  const result = await db
+    .select()
+    .from(user)
+    .where(eq(user.username, username))
+    .execute();
+  return result.length === 0;
+}

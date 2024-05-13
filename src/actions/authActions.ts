@@ -22,14 +22,3 @@ export async function authenticate(
     throw error;
   }
 }
-
-export async function checkIsUsernameUnique(
-  username: string,
-): Promise<boolean> {
-  const result = await db
-    .select()
-    .from(user)
-    .where(eq(user.username, username))
-    .execute();
-  return result.length > 0;
-}
