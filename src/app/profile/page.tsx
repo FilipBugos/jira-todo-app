@@ -11,9 +11,9 @@ export default async function Home() {
   // TODO: change this once auth is done
   const loggedInUser = 1;
   // TODO: cut the list of projects/issues based on the relevance
-  const projects = await getAllUserProjects([eq(user.ID, loggedInUser)]);
+  const projects = await getAllUserProjects([eq(user.id, loggedInUser)]);
   const issues = await getIssuesJoined([eq(issue.AssignedTo, loggedInUser)]);
-  const userEntity = (await getUser([eq(user.ID, loggedInUser)])).at(0);
+  const userEntity = (await getUser([eq(user.id, loggedInUser)])).at(0);
 
   return (
     <div className="flex flex-col gap-10 items-center">
@@ -21,7 +21,7 @@ export default async function Home() {
         <img className="rounded-md object-cover h-48 w-100" src={avatar.src} />
       </div>
       <div className="self-center">
-        <h1 className="text-4xl justify-self-center">{userEntity?.Name}</h1>
+        <h1 className="text-4xl justify-self-center">{userEntity?.name}</h1>
       </div>
       <div className="w-1/3">
         <h2 className="text-2xl">Projects</h2>

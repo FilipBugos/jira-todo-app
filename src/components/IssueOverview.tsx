@@ -134,8 +134,8 @@ export const IssueOverview = ({
                 .map((p) => [...p.project.Members])
                 .flat()
                 .map((u) => ({
-                  key: u.User.ID,
-                  value: u.User.Name
+                  key: u.User.id,
+                  value: u.User.name
                 }))}
               onChange={(selectedOption) => {
                 const selectedAssignee = Number(selectedOption.target.value);

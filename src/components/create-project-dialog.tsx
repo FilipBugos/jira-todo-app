@@ -104,12 +104,12 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
 
   const selectUser = (user: ParticipantsType) => {
     setParticipants([...participants, user]);
-    setUsers(userEntities.filter((u) => u.ID !== user.user.id));
+    setUsers(userEntities.filter((u) => u.id !== user.user.id));
   };
 
   const deleteUser = (user: number) => {
     setParticipants([...participants.filter((u) => u.user.id !== user)]);
-    const userEntity = users.find((u) => u.ID === user);
+    const userEntity = users.find((u) => u.id === user);
     userEntity ? setUsers([...userEntities, userEntity]) : undefined;
   };
 
@@ -161,7 +161,7 @@ const CreateProjectDialog = ({ users, trigger }: CreateProjectDialogType) => {
                 ))}
 
                 <AddParticipantToProject
-                  data={userEntities.map((u) => ({ key: u.ID, value: u.Name }))}
+                  data={userEntities.map((u) => ({ key: u.id, value: u.name }))}
                   setData={selectUser}
                 />
 

@@ -21,8 +21,8 @@ export const getSprintsOfUser = async (filters?: SQL[]) =>
       Project: {
         with: {
           Members: true
-        },
-      }
+        }
+      },
     },
     where: filters ? and(...filters) : undefined
   });
@@ -30,7 +30,7 @@ export const getSprintsOfUser = async (filters?: SQL[]) =>
 /*    .select({ sprint })
     .from(sprint)
     .leftJoin(userProject, eq(userProject.Project, sprint.Project))
-    .leftJoin(user, eq(userProject.User, user.ID))
+    .leftJoin(user, eq(userProject.User, user.id))
     .where(filters ? and(...filters) : undefined);
 */
 export type SprintsWithUsers = Awaited<

@@ -2,15 +2,15 @@ import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("User", {
-  ID: integer("id").primaryKey(),
-  Name: text("name").notNull(),
-  Password: text("password").notNull()
+  id: integer("id").primaryKey(),
+  name: text("name").notNull(),
+  password: text("password").notNull()
 });
 
 export const userRelations = relations(user, ({ many }) => ({
   Projects: many(userProject),
-  AssignedIssues: many(issue),
-  CreatedIssues: many(issue)
+  createdByUser: many(issue, { relationName: "createdByUser" }),
+  assignedToUser: many(issue, { relationName: "assignedToUser" })
 }));
 
 export const project = sqliteTable("Project", {
@@ -21,12 +21,12 @@ export const project = sqliteTable("Project", {
     sql`(CURRENT_TIMESTAMP)`
   ),
   CreatedBy: integer("created-by")
-    .references(() => user.ID)
+    .references(() => user.id)
     .notNull()
 });
 
 export const projectRelations = relations(project, ({ one, many }) => ({
-  CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.ID] }),
+  CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.id] }),
   Members: many(userProject),
   Sprints: many(sprint),
   Issues: many(issue)
@@ -50,7 +50,7 @@ export const sprintRelations = relations(sprint, ({ one, many }) => ({
 export const userProject = sqliteTable("UserProject", {
   ID: integer("id").primaryKey(),
   User: integer("user-id")
-    .references(() => user.ID)
+    .references(() => user.id)
     .notNull(),
   Project: integer("project-id")
     .references(() => project.ID)
@@ -59,7 +59,7 @@ export const userProject = sqliteTable("UserProject", {
 });
 
 export const userProjectRelations = relations(userProject, ({ one }) => ({
-  User: one(user, { fields: [userProject.User], references: [user.ID] }),
+  User: one(user, { fields: [userProject.User], references: [user.id] }),
   Project: one(project, {
     fields: [userProject.Project],
     references: [project.ID]
@@ -75,9 +75,9 @@ export const issue = sqliteTable("Issue", {
     sql`(CURRENT_TIMESTAMP)`
   ),
   CreatedBy: integer("created-by")
-    .references(() => user.ID)
+    .references(() => user.id)
     .notNull(),
-  AssignedTo: integer("assigne-to").references(() => user.ID),
+  AssignedTo: integer("assigne-to").references(() => user.id),
   Estimation: integer("estimation"),
   Label: integer("label"),
   SprintID: integer("sprint-id").references(() => sprint.ID),
@@ -87,13 +87,21 @@ export const issue = sqliteTable("Issue", {
 });
 
 export const issueRelations = relations(issue, ({ one }) => ({
-  CreatedBy: one(user, { fields: [issue.CreatedBy], references: [user.ID] }),
-  AssignedTo: one(user, { fields: [issue.AssignedTo], references: [user.ID] }),
+  CreatedBy: one(user, {
+    fields: [issue.CreatedBy],
+    references: [user.id],
+    relationName: "createdByUser",
+  }),
+  AssignedTo: one(user, {
+    fields: [issue.AssignedTo],
+    references: [user.id],
+    relationName: "assignedToUser",
+  }),
   Sprint: one(sprint, { fields: [issue.SprintID], references: [sprint.ID] }),
   Project: one(project, {
     fields: [issue.ProjectID],
-    references: [project.ID]
-  }),
+    references: [project.ID],
+  })
 }));
 
 export type InsertUser = typeof user.$inferInsert;

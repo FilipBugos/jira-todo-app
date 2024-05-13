@@ -178,8 +178,8 @@ const CreateIssueDialog = ({
                     .map((p) => [...p.project.Members])
                     .flat()
                     .map((u) => ({
-                      key: u.User.ID,
-                      value: u.User.Name
+                      key: u.User.id,
+                      value: u.User.name
                     }))}
                   className="min-w-[230px] flex-grow p-2 rounded-md"
                 />
