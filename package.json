@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "drizzle-kit generate:sqlite",
-    "migrate": "drizzle-kit migrate"
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -38,7 +38,7 @@
     "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "autoprefixer": "^10.4.17",
-    "drizzle-kit": "^0.20.17",
+    "drizzle-kit": "^0.21.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.1.0",
     "eslint-config-prettier": "^9.1.0",
