@@ -28,13 +28,13 @@ export async function createSession(userId: string) {
   const session = await encrypt({ userId, expiresAt });
 
   const data = await db
-    .insert(session)
+    .insert(sessions)
     .values({
       sessionToken: session,
       userId,
       expires: expiresAt,
     })
-    .returning({ id: session.userId });
+    .returning({ id: sessions.userId });
 
   const sessionId = data[0].id;
 
