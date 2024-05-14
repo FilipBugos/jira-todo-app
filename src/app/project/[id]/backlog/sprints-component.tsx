@@ -1,12 +1,10 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { InsertIssue, SelectIssue, SelectUser } from '../../../../db/schema';
 import { IssueJoined, updateIssue } from '@/actions/issueActions';
-import IssueFilter, {
-	FilterValues
-} from '../../../components/issues/issue-filters';
-import IssueTableFiltered from '../../../components/issues/issue-table-filtered';
+import { InsertIssue, SelectUser } from '../../../../../db/schema';
+import IssueFilter, { FilterValues } from '@/components/issues/issue-filters';
+import IssueTableFiltered from '@/components/issues/issue-table-filtered';
 
 interface PageIssuesProps {
 	issues: { [key: string | number]: IssueJoined[] };
@@ -18,7 +16,7 @@ interface PageIssuesProps {
 /**
  * Example usage of tables with issues and drag&drop, with and without filters.
  */
-function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
+const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 	const [localIssues, setLocalIssues] = useState(issues);
 	const [filters, setFilters] = useState<FilterValues>({
 		summaryFilter: '',
@@ -55,7 +53,7 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
 					{Object.keys(localIssues)
 						.filter(key => key !== 'none')
 						.map(key => (
-							<div>
+							<div key={key}>
 								<h1>Sprint: {key}</h1>
 								<IssueTableFiltered
 									key={key}
@@ -130,6 +128,6 @@ function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
 			</div>
 		</div>
 	);
-}
+};
 
 export default memo(PageIssues);
