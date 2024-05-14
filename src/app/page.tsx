@@ -21,8 +21,8 @@ export default async function Home() {
       <div className="flex flex-col space-y-10">
         {projects.map(p => {
           return (
-            <div key={p.project.ID} className="h-16 bg-gray-200 m-10 rounded-lg flex items-center">
-              <PageLink className="text-center text-2xl ml-10" href={`./project/${p.project.ID}/active-sprint`}>{p.project.Name}</PageLink>
+            <div key={p.project.ID} className="h-16 bg-gray-600 m-10 rounded-lg flex items-center">
+              <PageLink className="text-center text-2xl ml-20" href={`./project/${p.project.ID}/active-sprint`}>{p.project.Name}</PageLink>
             </div>
           )
         })}
