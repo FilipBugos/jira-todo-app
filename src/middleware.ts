@@ -1,50 +1,65 @@
-import NextAuth from 'next-auth';
-import { type NextRequest, NextResponse } from 'next/server';
+import { auth as middleware } from "next-auth/middleware";
+import { type NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-import { authConfig } from '../auth.config';
-import { cookies } from 'next/headers';
-import { decrypt } from '@/lib/session';
+import { decrypt } from "@/lib/session";
 
 const protectedRoutes = [
-	'/profile',
-	'/issue',
-	'/projects',
-	'/logout',
-	'/active-sprint',
-	'/all-issues',
-	'/backlog'
+  "/profile",
+  "/issue",
+  "/projects",
+  "/logout",
+  "/active-sprint",
+  "/all-issues",
+  "/backlog",
 ];
-const publicRoutes = ['/login', '/signup', '/'];
+const publicRoutes = ["/login", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
-	// 2. Check if the current route is protected or public
-	const path = req.nextUrl.pathname;
-	const isProtectedRoute = protectedRoutes.includes(path);
-	const isPublicRoute = publicRoutes.includes(path);
+  const path = req.nextUrl.pathname;
+  const isProtectedRoute = protectedRoutes.includes(path);
+  const isPublicRoute = publicRoutes.includes(path);
+  const cookieFromReq = req.cookies.get("authjs.session-token")?.value;
+  const cookie = cookies().get("session")?.value;
+  const session = await decrypt(cookie);
+  if (isProtectedRoute && (!session?.userId || !cookieFromReq)) {
+    console.log("SSSSSSession");
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+  console.log(
+    "req.nextUrl.pathname.startsWith('/')",
+    req.nextUrl.pathname.startsWith("/"),
+  );
 
-	// 3. Decrypt the session from the cookie
-	const cookie = cookies().get('session')?.value;
-	const session = await decrypt(cookie);
-	console.log('MD: session', session);
-	console.log('MD: cookie', cookie);
+  let isSessionOrCookieValid: boolean;
 
-	// 5. Redirect to /login if the user is not authenticated
-	if (isProtectedRoute && !session?.userId) {
-		return NextResponse.redirect(new URL('/login', req.nextUrl));
-	}
+  if (session?.userId || cookieFromReq) {
+    isSessionOrCookieValid = true;
+  } else {
+    isSessionOrCookieValid = false;
+  }
+  isSessionOrCookieValid;
 
-	// 6. Redirect to /dashboard if the user is authenticated
-	if (
-		isPublicRoute &&
-		session?.userId &&
-		!req.nextUrl.pathname.startsWith('/')
-	) {
-		return NextResponse.redirect(new URL('/', req.nextUrl));
-	}
-
-	return NextResponse.next();
+  console.log("isPublicRoute", isPublicRoute);
+  console.log("isSessionOrCookieValid", isSessionOrCookieValid);
+  console.log(
+    "req.nextUrl.pathname.startsWith('/')",
+    isPublicRoute &&
+      isSessionOrCookieValid &&
+      !req.nextUrl.pathname.startsWith("/"),
+  );
+  if (
+    isPublicRoute &&
+    isSessionOrCookieValid &&
+    !req.nextUrl.pathname.startsWith("/")
+  ) {
+    console.log("session-cookie", session, cookieFromReq);
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+  console.log("Session next", path);
+  return NextResponse.next();
 }
 
 export const config = {
-	matcher: ['/((?!api|_next/static|_next/image|favicon.ico|login).*)']
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|login).*)"],
 };

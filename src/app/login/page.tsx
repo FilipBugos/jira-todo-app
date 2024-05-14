@@ -1,5 +1,7 @@
 import LoginForm from "@/components/login-form";
-import { signIn, auth, providerMap } from "@/auth";
+import { signIn, auth } from "@/auth";
+
+import { providerMap } from "../../../auth.config";
 
 const LoginPage = async () => {
   const session = await auth();
