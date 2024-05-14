@@ -44,7 +44,7 @@ const formSchema = z.object({
 	description: z.string().optional().default(''),
 	sprint: z
 		.string()
-		.min(1, { message: 'Issue has to be assigned to sprint or backlog.' })
+		// .min(1, { message: 'Issue has to be assigned to sprint or backlog.' })
 		.transform(Number)
 		.default(''),
 	label: z.string().optional().transform(Number).default(''),
@@ -94,7 +94,7 @@ const CreateIssueDialog = ({
 						CreatedTime: new Date(),
 						Label: issue.label,
 						Status: getStatuses().at(0)?.Name,
-						SprintID: issue.sprint,
+						...(issue.sprint && { SprintID: issue.sprint }),
 						...(issue.assignee && { AssignedTo: issue.assignee })
 					};
 

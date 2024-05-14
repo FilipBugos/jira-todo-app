@@ -3,7 +3,7 @@
 import { and, type SQL } from "drizzle-orm";
 
 import { db } from "../../db/db";
-import { type InsertSprint, sprint } from "../../db/schema";
+import { type InsertSprint, issue, sprint } from "../../db/schema";
 
 export const getSprint = async (filters?: SQL[]) =>
   await db
@@ -12,7 +12,7 @@ export const getSprint = async (filters?: SQL[]) =>
     .where(filters ? and(...filters) : undefined);
 
 export const createSprint = async (data: InsertSprint) =>
-  await db.insert(sprint).values(data);
+  await db.insert(sprint).values(data).returning({id: sprint.ID});
 
 // get all sprint a user may be included in
 export const getSprintsOfUser = async (filters?: SQL[]) =>

@@ -1,6 +1,6 @@
 'use server';
 
-import { and, type SQL } from 'drizzle-orm';
+import { and, count, eq, type SQL } from 'drizzle-orm';
 
 import { createSprint } from '@/actions/sprintActions';
 
@@ -8,6 +8,7 @@ import { db } from '../../db/db';
 import {
 	type InsertProject,
 	project,
+	sprint,
 	user,
 	userProject
 } from '../../db/schema';
@@ -23,7 +24,7 @@ export type ProjectWithUserProjecs = {
 export const getProject = async (filters?: SQL[]) =>
 	await db
 		.select()
-		.from(user)
+		.from(project)
 		.where(filters ? and(...filters) : undefined);
 
 export const createProject = async (data: InsertProject) =>
@@ -73,6 +74,24 @@ export const getAllUserProjects = async (userID: string) => {
 		.map(project => ({
 			project
 		}));
+};
+
+export const assignCurrentSprint = async (projectId: number, sprintId: number) => {
+	const projectEntity = await getProject([eq(project.ID, projectId)]);
+	return await db
+    .update(project)
+    .set({
+      ...projectEntity,
+      CurrentSprint: sprintId
+    })
+    .where(eq(project.ID, projectId));
+};
+
+export const getAllProjectSprints = async (projectId: number) => {
+	return await db
+	.select({ count: count() })
+	.from(sprint)
+	.where(eq(sprint.Project, projectId))
 };
 
 export type ProjectsWithUsers = Awaited<
