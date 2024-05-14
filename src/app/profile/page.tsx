@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
@@ -13,10 +13,10 @@ export default async function Profile() {
 	const loggedInUser = await getLoggedInUser();
 
 	if (!loggedInUser) {
-    return <h1>Not logged in</h1>;
-  }
+		return <h1>Not logged in</h1>;
+	}
 
-  console.log(loggedInUser);
+	console.log(loggedInUser);
 
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
@@ -40,12 +40,9 @@ export default async function Profile() {
 					<li className="list-style-type:square">
 						<div className="flex flex-row gap-10">
 							{/* redirect to project via url */}
-							<label className="w-1/2 text-left text-lg underline underline-offset-4">
+							<p className="w-1/2 text-left text-lg underline underline-offset-4">
 								Project Name
-							</label>
-							<label className="w-1/2 text-right text-lg underline underline-offset-4">
-								Role
-							</label>
+							</p>
 						</div>
 					</li>
 				</ul>
@@ -55,13 +52,6 @@ export default async function Profile() {
 							<div className="flex flex-row gap-10">
 								<label className="w-1/2 text-left text-lg">
 									{p.project?.Name}
-								</label>
-								<label className="w-1/2 text-right text-lg">
-									{
-										p.project.Members.filter(
-											m => m.User.id === loggedInUser.id
-										).at(0)?.Role
-									}
 								</label>
 							</div>
 						</li>
@@ -74,15 +64,15 @@ export default async function Profile() {
 					<li className="list-style-type:square">
 						<div className="flex flex-row gap-10">
 							{/* redirect to issue via url */}
-							<label className="w-1/3 text-left text-lg underline underline-offset-4">
+							<p className="w-1/3 text-left text-lg underline underline-offset-4">
 								Summary
-							</label>
-							<label className="w-1/3 text-center text-lg underline underline-offset-4">
+							</p>
+							<p className="w-1/3 text-center text-lg underline underline-offset-4">
 								Sprint name
-							</label>
-							<label className="w-1/3 text-right text-lg underline underline-offset-4">
+							</p>
+							<p className="w-1/3 text-right text-lg underline underline-offset-4">
 								Estimation
-							</label>
+							</p>
 						</div>
 					</li>
 				</ul>

@@ -9,7 +9,6 @@ import { FormInput } from './form-fields/form-input';
 import { FormSelectField } from './form-fields/form-select';
 
 export type ParticipantsType = {
-	role: string;
 	user: {
 		id: string;
 		name: string;
@@ -26,8 +25,7 @@ type AddParticipantFormType = HTMLProps<HTMLSelectElement> & {
 };
 
 const formSchema = z.object({
-	user: z.string().min(1, { message: 'User must be selected' }).default(''),
-	role: z.string().min(3, { message: 'Role  must be specified' })
+	user: z.string().min(1, { message: 'User must be selected' }).default('')
 });
 
 export type DataSchema = z.infer<typeof formSchema>;
@@ -42,7 +40,6 @@ export const AddParticipantToProject = ({
 
 	const reset = () => {
 		form.resetField('user');
-		form.resetField('role');
 	};
 
 	const addParticipant = () => {
@@ -50,7 +47,6 @@ export const AddParticipantToProject = ({
 			.handleSubmit(
 				async participant => {
 					const userToAdd: ParticipantsType = {
-						role: participant.role,
 						user: {
 							id: participant.user,
 							name: data.find(d => d.key === participant.user)?.value ?? ''
@@ -73,10 +69,6 @@ export const AddParticipantToProject = ({
 				<FormSelectField
 					data={data}
 					name="user"
-					className="min-h-[40px] min-w-[160px] flex-grow rounded-md p-2"
-				/>
-				<FormInput
-					name="role"
 					className="min-h-[40px] min-w-[160px] flex-grow rounded-md p-2"
 				/>
 				<button onClick={() => addParticipant()} className="max-w-[30px]">
