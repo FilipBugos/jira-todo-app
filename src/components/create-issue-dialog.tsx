@@ -22,6 +22,7 @@ import { SelectUser, type InsertIssue, type SelectSprint } from '../../db/schema
 
 import { LabelInputField } from './form-fields/label-input-field';
 import { LabelSelectField } from './form-fields/label-select-field';
+import { useRouter } from 'next/navigation';
 
 type CreateIssueDialogType = {
 	projects: ProjectsWithUsers[];
@@ -61,6 +62,7 @@ const CreateIssueDialog = ({
 }: CreateIssueDialogType) => {
 	const [selectedProject, setSelectedProject] = useState<number>();
 	const [sprintsToSelect, setSprintsToSelect] = useState<SelectSprint[]>([]);
+	const router = useRouter();
 
 	const form = useForm<CreateIssueSchema>({
 		resolver: zodResolver(formSchema)
@@ -100,6 +102,7 @@ const CreateIssueDialog = ({
 						await createIssue(issueEntity);
 						toast.success('Issue was successfully created');
 						reset();
+						router.refresh();
 						document.getElementById('closeDialogBtn')?.click();
 					} catch (e) {
 						if (e instanceof Error) {

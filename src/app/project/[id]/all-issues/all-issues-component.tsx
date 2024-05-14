@@ -12,7 +12,13 @@ interface PageIssuesProps {
   statuses: { ID: number; Name: string }[];
 }
 
-function PageIssues({ issues, users, labels, statuses }: PageIssuesProps) {
+type ProjectOverviewPageProps = {
+  params: {
+    id: number;
+  };
+};
+
+function PageIssues({ issues, users, labels, statuses }: PageIssuesProps & ProjectOverviewPageProps) {
   const [filters, setFilters] = useState<FilterValues>({
     summaryFilter: "",
     descriptionFilter: "",
