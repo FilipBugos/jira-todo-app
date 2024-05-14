@@ -11,13 +11,13 @@ export const user = sqliteTable("user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  username: text("username").notNull().unique(),
+  username: text("username"),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
   role: text("role").notNull().default("user"),
-  password: text("password").notNull(),
+  password: text("password"),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
