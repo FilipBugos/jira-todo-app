@@ -35,7 +35,7 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
     ...issue.Issue,
     CreatedBy: issue.creator,
     AssignedTo: issue.assignee,
-    Sprint: issue.Sprint
+    Sprint: issue.Sprint,
   }));
 };
 
@@ -46,8 +46,6 @@ export const updateIssue = async (data: InsertIssue) => {
     .where(eq(issue.ID, data.ID))
     .returning({ updatedId: issue.ID });
   revalidatePath("/");
-  console.log(data);
-  console.log(returned);
 };
 
 export type IssueJoined = Awaited<ReturnType<typeof getIssuesJoined>>[number];

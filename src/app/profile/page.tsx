@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
@@ -13,10 +13,10 @@ export default async function Profile() {
 	const loggedInUser = await getLoggedInUser();
 
 	if (!loggedInUser) {
-		return <h1>Not logged in</h1>;
-	}
+    return <h1>Not logged in</h1>;
+  }
 
-	console.log(loggedInUser);
+  console.log(loggedInUser);
 
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
