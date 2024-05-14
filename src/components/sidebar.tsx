@@ -5,7 +5,7 @@ import { PageLink } from './nav/page-link';
 const Sidebar: React.FC = () => {
 	return (
 		<div className="h-full w-64 bg-gray-800 text-white">
-			<div className="p-4">
+			<div className="p-4 flex flex-col space-y-2">
 				<h1 className="mb-6 text-2xl font-bold">Sidebar</h1>
 				<PageLink href="./backlog">Backlog</PageLink>
 				<PageLink href="./active-sprint"> Active sprint</PageLink>
