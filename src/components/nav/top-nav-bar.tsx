@@ -22,7 +22,7 @@ export default async function TopNavBar() {
         <div className="m-3">
           <PageLink
             className="p-2 hover:rounded-md hover:bg-slate-400"
-            href="login"
+            href="/login"
           >
             Log In
           </PageLink>
@@ -30,7 +30,7 @@ export default async function TopNavBar() {
         <div className="m-3">
           <PageLink
             className="p-2 hover:rounded-md hover:bg-slate-400"
-            href="signup"
+            href="/signup"
           >
             Sign Up
           </PageLink>

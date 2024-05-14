@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
@@ -20,7 +20,7 @@ export default async function Profile() {
 
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
-	const issues = await getIssuesJoined([eq(issue.AssignedTo, loggedInUser.id)]);
+	const issues = await getIssuesJoined([or(eq(issue.AssignedTo, loggedInUser.id), eq(issue.CreatedBy, loggedInUser.id))]);
 
 	return (
 		<div className="flex flex-col items-center gap-10">

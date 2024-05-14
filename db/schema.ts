@@ -100,7 +100,7 @@ export const sprint = sqliteTable('Sprint', {
 	ID: integer('id').primaryKey(),
 	Name: text('name').notNull(),
 	StartDate: integer('start-date', { mode: 'timestamp' }),
-	EndDate: integer('start-date', { mode: 'timestamp' }),
+	EndDate: integer('end-date', { mode: 'timestamp' }),
 	Project: integer('project-id')
 		.references(() => project.ID)
 		.notNull()
