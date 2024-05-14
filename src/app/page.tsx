@@ -1,12 +1,10 @@
-import { useSession } from 'next-auth/react';
-
 import { getIssuesJoined, type IssueJoined } from '@/actions/issueActions';
 import { getUser } from '@/actions/userActions';
 import { getLabels, getStatuses } from '@/lib/utils';
-
 import PageIssues from '@/app/(overview)/backlog/sprints-component';
 import { auth } from '@/auth';
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, react/function-component-definition
 export default async function Home() {
 	const session = await auth();
 	console.log(session);

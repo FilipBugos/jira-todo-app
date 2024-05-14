@@ -15,7 +15,7 @@ import {
 export type ProjectWithUserProjecs = {
 	Project: InsertProject;
 	UserProjectEntities: {
-		User: number;
+		User: string;
 		Role: string;
 	}[];
 };

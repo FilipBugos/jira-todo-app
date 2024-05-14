@@ -23,7 +23,7 @@ export const FormSelectField = ({
   } = useFormContext();
   console.log(data);
   return (
-    <label htmlFor={name} className="form-control w-full min-w-[230px]">
+    <label htmlFor={name} className="form-control w-full min-w-[230px] flex flex-col">
       <select {...register(name)} className={cn(className)} {...selectProps}>
         {!selectProps.value && <option selected />}
         {data.map((d) => (
