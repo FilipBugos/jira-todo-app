@@ -79,14 +79,21 @@ export const project = sqliteTable('Project', {
 	),
 	CreatedBy: text('created-by')
 		.references(() => user.id)
-		.notNull()
+		.notNull(),
+	CurrentSprint: integer('current_sprint')
+		.references(() => sprint.ID)
 });
 
 export const projectRelations = relations(project, ({ one, many }) => ({
 	CreatedBy: one(user, { fields: [project.CreatedBy], references: [user.id] }),
 	Members: many(userProject),
 	Sprints: many(sprint),
-	Issues: many(issue)
+	Issues: many(issue),
+	CurrentSprint: one(sprint, {
+		fields: [project.CurrentSprint],
+		references: [sprint.id],
+		relationName: 'currentSprint'
+	})
 }));
 
 export const sprint = sqliteTable('Sprint', {

@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { decrypt } from "@/lib/session";
 
 const protectedRoutes = [
-  "/profile",
   "/issue",
   "/projects",
   "/logout",

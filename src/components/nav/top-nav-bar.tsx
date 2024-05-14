@@ -51,7 +51,7 @@ export default async function TopNavBar() {
       <div className="m-3">
         <PageLink
           className="p-2 hover:rounded-md hover:bg-slate-400"
-          href="profile"
+          href="/profile"
         >
           Profile
         </PageLink>
