@@ -35,7 +35,7 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 	};
 
 	return (
-		<div className="m-4 w-full">
+		<div className="m-4">
 			<IssueFilter
 				usersOptions={users.map(item => ({
 					value: item.id,
@@ -53,7 +53,7 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 			/>
 			<div className="ml-10 flex gap-5">
 				{statuses.map(key => (
-					<div className="w-1/5">
+					<div className="w-4/12">
 						<h1>Status: {key.Name}</h1>
 						<IssueTableFiltered
 							key={key.Name}

@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 
-import { getIssuesJoined } from '@/actions/issueActions';
+import { getIssuesJoined, getProjectsIssues } from '@/actions/issueActions';
 import { getLabels, getStatuses } from '@/lib/utils';
 import { getUsersOfTheProject } from '@/actions/userProjectActions';
 
@@ -15,7 +15,7 @@ type ProjectOverviewPageProps = {
 };
 
 export default async function AllIsues({ params }: ProjectOverviewPageProps) {
-	const issues = await getIssuesJoined([eq(project.ID, params.id)]);
+	const issues = await getProjectsIssues([params.id]);
 	const users = (await getUsersOfTheProject(params.id)).map(u => u.user);
 
 	return (

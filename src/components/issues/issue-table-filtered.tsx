@@ -29,7 +29,7 @@ const IssueTableFiltered = ({
 	tableName,
 	hiddenColumns,
 	filters
-}: IssueTableFiltersProps) {
+}: IssueTableFiltersProps) => {
 	const filteredIssues = useMemo(() => {
 		return issues.filter(issue => {
 			return (

@@ -1,9 +1,10 @@
 'use server';
 
-import { and, type SQL } from 'drizzle-orm';
+import { and, eq, type SQL } from 'drizzle-orm';
 
 import { db } from '../../db/db';
 import { type InsertSprint, issue, sprint } from '../../db/schema';
+import { revalidateProjectLayout } from '@/common/revalidate';
 
 export const getSprint = async (filters?: SQL[]) =>
 	await db
@@ -39,6 +40,16 @@ export const getActiveUserSprint = async (filters?: SQL[]) => {
     .leftJoin(user, eq(userProject.User, user.id))
     .where(filters ? and(...filters) : undefined);
 */
+
+export const endSprint = async (sprintId: number) => {
+	const sprintToUpdate = await db.query.sprint.findFirst(sprintId);
+	console.log('pica', sprintToUpdate);
+	await db
+		.update(sprint)
+		.set({ EndDate: new Date() })
+		.where(eq(sprint.ID, sprintId));
+	revalidateProjectLayout();
+};
 export type SprintsWithUsers = Awaited<
 	ReturnType<typeof getSprintsOfUser>
 >[number];

@@ -38,7 +38,7 @@ const PageIssues = ({
 	});
 
 	return (
-		<div className="m-4 w-full">
+		<div className="m-4 ">
 			<IssueFilter
 				usersOptions={users.map(item => ({
 					value: item.ID,

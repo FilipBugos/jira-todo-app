@@ -31,9 +31,9 @@ const Sidebar = async ({ projectId }: SidebarType) => {
 	}
 
 	return (
-		<div className="flex h-full flex-col bg-gray-800 text-white">
-			<div className="flex flex-col space-y-2 p-4">
-				<h1 className="mb-6 text-2xl font-bold">Sidebar</h1>
+		<div className="flex flex-grow flex-col bg-gray-800 text-white">
+			<div className="flex flex-grow flex-col space-y-2 p-4">
+				<h1 className="mb-6 text-2xl font-bold">Project: {project.Name}</h1>
 				<PageLink href="./backlog">Backlog</PageLink>
 				<PageLink href="./active-sprint"> Active sprint</PageLink>
 				<PageLink href="./all-issues"> All issues</PageLink>

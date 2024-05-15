@@ -9,18 +9,27 @@ import IssueFilter, {
 import IssueTableFiltered from '@/components/issues/issue-table-filtered';
 
 import { type InsertIssue, type SelectUser } from '../../../../../db/schema';
+import { endSprint } from '@/actions/sprintActions';
 
 type PageIssuesProps = {
 	issues: { [key: string | number]: IssueJoined[] };
 	users: SelectUser[];
 	labels: { ID: number; Name: string }[];
 	statuses: { ID: number; Name: string }[];
+	activeSprint?: number;
+	onSprintEndClick?: () => void;
 };
 
 /**
  * Example usage of tables with issues and drag&drop, with and without filters.
  */
-const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
+const PageIssues = ({
+	issues,
+	users,
+	labels,
+	statuses,
+	activeSprint
+}: PageIssuesProps) => {
 	const [localIssues, setLocalIssues] = useState(issues);
 	const [filters, setFilters] = useState<FilterValues>({
 		summaryFilter: '',
@@ -36,7 +45,7 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 	};
 
 	return (
-		<div className="m-4 w-full">
+		<div className="m-4">
 			<IssueFilter
 				usersOptions={users.map(item => ({
 					value: item.id,
@@ -56,9 +65,22 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 				<div className="w-8/12">
 					{Object.keys(localIssues)
 						.filter(key => key !== 'none')
+						.sort((a, b) => parseInt(b) - parseInt(a))
 						.map(key => (
 							<div key={key}>
-								<h1>Sprint: {key}</h1>
+								<div className="flex flex-row items-center">
+									<h1>Sprint: {key}</h1>
+									{activeSprint === parseInt(key) && (
+										<button
+											className="mx-5 rounded-md bg-blue-500 px-4 py-2 text-white"
+											onClick={async () => {
+												await endSprint(parseInt(key));
+											}}
+										>
+											End sprint
+										</button>
+									)}
+								</div>
 								<IssueTableFiltered
 									key={key}
 									issues={localIssues[key] || []}

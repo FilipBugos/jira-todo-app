@@ -9,13 +9,13 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children, params }: RootLayoutProps) {
 	return (
-		<div className="flex min-h-screen min-w-full flex-col">
-			<main className="container mx-auto  max-w-screen-2xl">
-				<div className="grid h-screen grid-cols-12">
-					<div className="col-span-2 bg-indigo-50">
+		<div className="flex flex-grow flex-col">
+			<main className="flex flex-grow flex-col">
+				<div className="flex flex-grow flex-row">
+					<div className="flex w-2/12 flex-grow bg-indigo-50">
 						<Sidebar projectId={params.id} />
 					</div>
-					<div className="col-span-10 bg-gray-50">{children}</div>
+					<div className="h-full w-10/12 bg-gray-50">{children}</div>
 				</div>
 			</main>
 		</div>
