@@ -1,17 +1,21 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { IssueJoined, updateIssue } from '@/actions/issueActions';
-import { InsertIssue, SelectUser } from '../../../../../db/schema';
-import IssueFilter, { FilterValues } from '@/components/issues/issue-filters';
+
+import { type IssueJoined, updateIssue } from '@/actions/issueActions';
+import IssueFilter, {
+	type FilterValues
+} from '@/components/issues/issue-filters';
 import IssueTableFiltered from '@/components/issues/issue-table-filtered';
 
-interface PageIssuesProps {
+import { type InsertIssue, type SelectUser } from '../../../../../db/schema';
+
+type PageIssuesProps = {
 	issues: { [key: string | number]: IssueJoined[] };
 	users: SelectUser[];
 	labels: { ID: number; Name: string }[];
 	statuses: { ID: number; Name: string }[];
-}
+};
 
 /**
  * Example usage of tables with issues and drag&drop, with and without filters.

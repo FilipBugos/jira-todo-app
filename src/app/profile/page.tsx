@@ -1,12 +1,11 @@
-import { eq, or } from "drizzle-orm";
+import { eq, or } from 'drizzle-orm';
 
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getIssuesJoined } from '@/actions/issueActions';
-import { getUser } from '@/actions/userActions';
 import avatar from '@/assets/avatar.png';
 import { getLoggedInUser } from '@/actions/authActions';
 
-import { issue, user } from '../../../db/schema';
+import { issue } from '../../../db/schema';
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, react/function-component-definition
 export default async function Profile() {
@@ -20,7 +19,12 @@ export default async function Profile() {
 
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
-	const issues = await getIssuesJoined([or(eq(issue.AssignedTo, loggedInUser.id), eq(issue.CreatedBy, loggedInUser.id))]);
+	const issues = await getIssuesJoined([
+		or(
+			eq(issue.AssignedTo, loggedInUser.id),
+			eq(issue.CreatedBy, loggedInUser.id)
+		)
+	]);
 
 	return (
 		<div className="flex flex-col items-center gap-10">

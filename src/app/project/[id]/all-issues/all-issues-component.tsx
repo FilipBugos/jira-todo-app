@@ -1,53 +1,62 @@
-"use client";
-import IssueFilter, { FilterValues } from "@/components/issues/issue-filters";
-import IssueTableFiltered from "@/components/issues/issue-table-filtered";
-import { memo, useState } from "react";
-import { SelectUser } from "../../../../db/schema";
-import { IssueJoined } from "@/actions/issueActions";
+'use client';
+import { memo, useState } from 'react';
 
-interface PageIssuesProps {
-  issues: IssueJoined[];
-  users: SelectUser[];
-  labels: { ID: number; Name: string }[];
-  statuses: { ID: number; Name: string }[];
-}
+import IssueFilter, {
+	type FilterValues
+} from '@/components/issues/issue-filters';
+import IssueTableFiltered from '@/components/issues/issue-table-filtered';
+import { type IssueJoined } from '@/actions/issueActions';
 
-type ProjectOverviewPageProps = {
-  params: {
-    id: number;
-  };
+import { type SelectUser } from '../../../../db/schema';
+
+type PageIssuesProps = {
+	issues: IssueJoined[];
+	users: SelectUser[];
+	labels: { ID: number; Name: string }[];
+	statuses: { ID: number; Name: string }[];
 };
 
-function PageIssues({ issues, users, labels, statuses }: PageIssuesProps & ProjectOverviewPageProps) {
-  const [filters, setFilters] = useState<FilterValues>({
-    summaryFilter: "",
-    descriptionFilter: "",
-    createdByFilter: [],
-    assignedToFilter: [],
-    statusFilter: [],
-    labelFilter: [],
-  });
+type ProjectOverviewPageProps = {
+	params: {
+		id: number;
+	};
+};
 
-  return (
-    <div className="w-full m-4">
-      <IssueFilter
-        usersOptions={users.map((item) => ({
-          value: item.ID,
-          label: item.Name,
-        }))}
-        statusOptions={statuses.map((item) => ({
-          value: item.ID,
-          label: item.Name,
-        }))}
-        labelOptions={labels.map((item) => ({
-          value: item.ID,
-          label: item.Name,
-        }))}
-        onFilterChange={setFilters}
-      />
-      <IssueTableFiltered filters={filters} issues={issues} />
-    </div>
-  );
-}
+const PageIssues = ({
+	issues,
+	users,
+	labels,
+	statuses
+}: PageIssuesProps & ProjectOverviewPageProps) => {
+	const [filters, setFilters] = useState<FilterValues>({
+		summaryFilter: '',
+		descriptionFilter: '',
+		createdByFilter: [],
+		assignedToFilter: [],
+		statusFilter: [],
+		labelFilter: []
+	});
+
+	return (
+		<div className="m-4 w-full">
+			<IssueFilter
+				usersOptions={users.map(item => ({
+					value: item.ID,
+					label: item.Name
+				}))}
+				statusOptions={statuses.map(item => ({
+					value: item.ID,
+					label: item.Name
+				}))}
+				labelOptions={labels.map(item => ({
+					value: item.ID,
+					label: item.Name
+				}))}
+				onFilterChange={setFilters}
+			/>
+			<IssueTableFiltered filters={filters} issues={issues} />
+		</div>
+	);
+};
 
 export default memo(PageIssues);

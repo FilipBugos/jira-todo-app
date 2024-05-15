@@ -3,12 +3,7 @@ import { Settings } from 'lucide-react';
 
 import UpdateProjectDialog from '@/components/update-project-dialog';
 import { getLoggedInUser } from '@/actions/authActions';
-import { getUserProject } from '@/actions/userProjectActions';
-import {
-	getProject,
-	getProjectByID,
-	getProjectByIDType
-} from '@/actions/projectActions';
+import { getProjectByID } from '@/actions/projectActions';
 import { getUser } from '@/actions/userActions';
 
 import { PageLink } from './nav/page-link';

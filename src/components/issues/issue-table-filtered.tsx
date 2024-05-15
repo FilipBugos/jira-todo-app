@@ -1,18 +1,20 @@
 'use client';
 
-import { IssueJoined } from '@/actions/issueActions';
-import React, { useState, useCallback, useEffect, memo, useMemo } from 'react';
-import IssueFilter, { FilterValues, SelectOption } from './issue-filters';
-import IssueTable from './issue-table';
-import { HiddenColumnsType } from './issue-component';
+import React, { memo, useMemo } from 'react';
 
-interface IssueTableFiltersProps {
+import { type IssueJoined } from '@/actions/issueActions';
+
+import { type FilterValues } from './issue-filters';
+import IssueTable from './issue-table';
+import { type HiddenColumnsType } from './issue-component';
+
+type IssueTableFiltersProps = {
 	issues: IssueJoined[];
 	onDropIssue?: (id: number, toTable: string) => void;
 	tableName?: string;
 	hiddenColumns?: HiddenColumnsType[];
 	filters: FilterValues;
-}
+};
 
 /**
  * @description Wrapper around table component with filters
@@ -21,40 +23,41 @@ interface IssueTableFiltersProps {
  * @param tableName - name of the table, used for drag&drop
  *
  */
-function IssueTableFiltered({
+const IssueTableFiltered = ({
 	issues,
 	onDropIssue,
 	tableName,
 	hiddenColumns,
 	filters
-}: IssueTableFiltersProps) {
-	const filteredIssues = useMemo(() => {
-		return issues.filter(issue => {
-			return (
-				issue.Summary.toLowerCase().includes(
-					filters.summaryFilter.toLowerCase()
-				) &&
-				issue.Description?.toLowerCase()?.includes(
-					filters.descriptionFilter.toLowerCase()
-				) &&
-				(filters.createdByFilter.length === 0 ||
-					filters.createdByFilter.some(
-						opt => opt.value === issue.CreatedBy?.id
-					)) &&
-				(filters.assignedToFilter.length === 0 ||
-					filters.assignedToFilter.some(
-						opt => opt.value === issue.AssignedTo?.id
-					)) &&
-				(filters.statusFilter.length === 0 ||
-					filters.statusFilter.some(
-						// TODO: remove parseInt
-						opt => opt.value === parseInt(issue.Status ?? '')
-					)) &&
-				(filters.labelFilter.length === 0 ||
-					filters.labelFilter.some(opt => opt.value === issue.Label))
-			);
-		});
-	}, [issues, filters]);
+}: IssueTableFiltersProps) => {
+	const filteredIssues = useMemo(
+		() =>
+			issues.filter(
+				issue =>
+					issue.Summary.toLowerCase().includes(
+						filters.summaryFilter.toLowerCase()
+					) &&
+					issue.Description?.toLowerCase()?.includes(
+						filters.descriptionFilter.toLowerCase()
+					) &&
+					(filters.createdByFilter.length === 0 ||
+						filters.createdByFilter.some(
+							opt => opt.value === issue.CreatedBy?.id
+						)) &&
+					(filters.assignedToFilter.length === 0 ||
+						filters.assignedToFilter.some(
+							opt => opt.value === issue.AssignedTo?.id
+						)) &&
+					(filters.statusFilter.length === 0 ||
+						filters.statusFilter.some(
+							// TODO: remove parseInt
+							opt => opt.value === parseInt(issue.Status ?? '')
+						)) &&
+					(filters.labelFilter.length === 0 ||
+						filters.labelFilter.some(opt => opt.value === issue.Label))
+			),
+		[issues, filters]
+	);
 
 	return (
 		<div>
@@ -66,6 +69,6 @@ function IssueTableFiltered({
 			/>
 		</div>
 	);
-}
+};
 
 export default memo(IssueTableFiltered);
