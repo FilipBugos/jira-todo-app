@@ -22,9 +22,8 @@ type ProjectOverviewPageProps = {
 export default async function Backlog({ params }: ProjectOverviewPageProps) {
 	const projectId = params.id;
 	const user = await getLoggedInUser();
-	const issues = await getIssuesJoined([
-		and(eq(project.ID, params.id), isNull(issue.SprintID))
-	]);
+	const issues = await getIssuesJoined([and(eq(project.ID, params.id))]);
+	const sprints = await getAllProjectSprints(projectId);
 	const users = (await getUsersOfTheProject(params.id)).map(u => u.user);
 	const currentSprints = await getSprint([eq(sprint.Project, projectId)]);
 	const newSprintNumber = currentSprints.length + 1;

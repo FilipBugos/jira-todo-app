@@ -84,11 +84,13 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 												AssignedTo: foundItem.AssignedTo?.id,
 												Estimation: foundItem.Estimation,
 												Label: foundItem.Label,
-												SprintID: prev[key][0].SprintID,
+												SprintID: key,
 												ProjectID: foundItem.ProjectID
 											};
 
-											// Call the updateIssue function with the transformed issue
+											console.log(prev); // Call the updateIssue function with the transformed issue
+											console.log(prev[key]); // Call the updateIssue function with the transformed issue
+											console.log(prev[key][0]); // Call the updateIssue function with the transformed issue
 											onDropUpdate(transformedIssue);
 											return { ...prev };
 										});
@@ -120,6 +122,24 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 										prev[fromTable] = prev[fromTable].filter(
 											issue => issue.ID !== id
 										);
+										const transformedIssue: InsertIssue = {
+											ID: foundItem.ID,
+											Summary: foundItem.Summary,
+											Description: foundItem.Description,
+											Status: foundItem.Status,
+											CreatedTime: foundItem.CreatedTime,
+											CreatedBy: foundItem.CreatedBy.id,
+											AssignedTo: foundItem.AssignedTo?.id,
+											Estimation: foundItem.Estimation,
+											Label: foundItem.Label,
+											SprintID: null,
+											ProjectID: foundItem.ProjectID
+										};
+
+										console.log(prev); // Call the updateIssue function with the transformed issue
+										console.log(prev[key]); // Call the updateIssue function with the transformed issue
+										console.log(prev[key][0]); // Call the updateIssue function with the transformed issue
+										onDropUpdate(transformedIssue);
 										return { ...prev };
 									});
 								}}

@@ -46,7 +46,7 @@ const formSchema = z.object({
 		.min(3, { message: 'Issue has to contain summary.' })
 		.default(''),
 	description: z.string().optional().default(''),
-	sprint: z.string().transform(Number).optional().default(''),
+	sprint: z.string().transform(Number).optional(),
 	label: z.string().optional().transform(Number).default(''),
 	assignee: z.string().optional().default(''),
 	storyPoints: z.string().optional().transform(Number).default('')
@@ -116,6 +116,8 @@ const CreateIssueDialog = ({
 			)
 			.call();
 	}
+
+	console.log(sprintsToSelect);
 
 	return (
 		<FormProvider {...form}>

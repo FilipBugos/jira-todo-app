@@ -107,12 +107,12 @@ const IssueComponent: React.FC<IssueProps> = ({
 			)}
 			{!hiddenColumns.includes('CreatedBy') && (
 				<div className="w-1/10 flex-shrink-0 flex-grow-0 items-center justify-center border-r border-black px-1">
-					Author: {issue.CreatedBy?.Name}
+					Author: {issue.CreatedBy?.name}
 				</div>
 			)}
 			{!hiddenColumns.includes('AssignedTo') && (
 				<div className="w-1/10 flex-shrink-0 flex-grow-0 items-center justify-center border-r border-black px-1">
-					Assignee: {issue.AssignedTo?.Name}
+					Assignee: {issue.AssignedTo?.name}
 				</div>
 			)}
 			{!hiddenColumns.includes('Estimation') && (

@@ -17,7 +17,6 @@ type PageIssuesProps = {
 };
 
 const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
-	const [prevIssues, setPrevIssues] = useState(issues);
 	const [localIssues, setLocalIssues] = useState(issues);
 	const [filters, setFilters] = useState<FilterValues>({
 		summaryFilter: '',

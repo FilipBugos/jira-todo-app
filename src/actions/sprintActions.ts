@@ -3,7 +3,7 @@
 import { and, type SQL } from 'drizzle-orm';
 
 import { db } from '../../db/db';
-import { type InsertSprint, sprint } from '../../db/schema';
+import { type InsertSprint, issue, sprint } from '../../db/schema';
 
 export const getSprint = async (filters?: SQL[]) =>
 	await db
@@ -27,6 +27,12 @@ export const getSprintsOfUser = async (filters?: SQL[]) =>
 		where: filters ? and(...filters) : undefined
 	});
 
+export const getActiveUserSprint = async (filters?: SQL[]) => {
+	const sprints = await getSprintsOfUser(filters);
+	return sprints.find(
+		sprint => sprint.StartDate < new Date() && sprint.EndDate > new Date()
+	);
+};
 /*    .select({ sprint })
     .from(sprint)
     .leftJoin(userProject, eq(userProject.Project, sprint.Project))

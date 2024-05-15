@@ -7,6 +7,8 @@ import { getUsersOfTheProject } from '@/actions/userProjectActions';
 import { issue, project } from '../../../../../db/schema';
 
 import StatusesComponent from './statuses-component';
+import { getUser } from '@/actions/userActions';
+import { getActiveUserSprint } from '@/actions/sprintActions';
 
 type ProjectOverviewPageProps = {
 	params: {
@@ -18,8 +20,9 @@ const backlogSprintName = 'Backlog';
 export default async function ProjectOverview({
 	params
 }: ProjectOverviewPageProps) {
+	const sprint = await getActiveUserSprint();
 	const issues = await getIssuesJoined([
-		and(eq(project.ID, params.id), isNotNull(issue.SprintID))
+		and(eq(project.ID, params.id), eq(issue.SprintID, sprint?.ID))
 	]);
 	const users = await getUsersOfTheProject(params.id);
 
