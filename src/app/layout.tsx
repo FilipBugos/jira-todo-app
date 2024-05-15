@@ -14,13 +14,15 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-
-
 	return (
-		<html lang="en">
-			<body className={inter.className}>
+		<html lang="en" className="min-h-screen">
+			<body
+				className={inter.className + '  box-border flex min-h-screen flex-col'}
+			>
 				<TopNavBar isUserLoggedIn={false} />
-				<Providers>{children}</Providers>
+				<div className="flex flex-grow">
+					<Providers>{children}</Providers>
+				</div>
 			</body>
 		</html>
 	);
@@ -30,5 +32,10 @@ export const metadata: Metadata = {
 	title: 'Jira Todo App',
 	description: 'Jira Clone',
 	keywords: 'Jira, Clone, Todo',
-	authors: [{ name: 'Martin Pokorny' }, { name: 'Filip Bugos' }, { name: 'Vitek Hnatovskyj' }, { name: 'David Valecky' } ]
+	authors: [
+		{ name: 'Martin Pokorny' },
+		{ name: 'Filip Bugos' },
+		{ name: 'Vitek Hnatovskyj' },
+		{ name: 'David Valecky' }
+	]
 };

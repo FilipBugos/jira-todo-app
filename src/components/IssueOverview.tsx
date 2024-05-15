@@ -34,21 +34,19 @@ export const IssueOverview = ({
 	if (!issue) {
 		return <div>Error</div>;
 	}
-
-	console.log(issue);
-	console.log(`projects in overwiew: ${projects}`);
-	console.log(sprints);
+	if (!issue) {
+		return <div>Error</div>;
+	}
 
 	const onSubmit = () => {
-		console.log(issueObject);
 		updateIssue(issueObject);
 	};
 
 	return (
 		<FormProvider {...form}>
-			<form>
-				<div className="">
-					<div className="mt-2 flex flex-col gap-4">
+			<form className=" flex-grow ">
+				<div className="flex flex-col items-center justify-center">
+					<div className="mt-2 flex w-8/12 flex-col gap-4">
 						<LabelSelectField
 							label="Project"
 							name="project"
@@ -66,20 +64,20 @@ export const IssueOverview = ({
 							}}
 							value={issueObject.ProjectID}
 						/>
-						<div className="grid grid-cols-2 grid-rows-5">
+						<div className="grid grid-cols-2">
 							<label>Description</label>
 							<EditableText
 								value={issueObject.Summary}
 								{...form}
 								name="Summary"
-								className="row-span-5 min-w-[180px] flex-grow rounded-md p-2"
+								className="flex w-full flex-grow overflow-hidden rounded-md border-2 border-black p-2"
 								placeholder="Enter description..."
 								onTextChange={text => {
 									setIssueObject({ ...issueObject, Summary: text });
 								}}
 							/>
 						</div>
-						<div className="grid grid-cols-2 grid-rows-5">
+						<div className="grid grid-cols-2 ">
 							<label>Estimation</label>
 							<EditableText
 								value={
@@ -89,7 +87,7 @@ export const IssueOverview = ({
 								}
 								{...form}
 								name="Estimation"
-								className="row-span-5 min-w-[180px] flex-grow rounded-md p-2"
+								className="row-span-5 flex w-full flex-grow rounded-md border-2 border-black p-2 p-2"
 								placeholder="Enter estimation..."
 								onTextChange={text => {
 									setIssueObject({ ...issueObject, Estimation: text });
@@ -149,25 +147,12 @@ export const IssueOverview = ({
 								issueObject.AssignedTo ? issueObject.AssignedTo : undefined
 							}
 						/>
-						<div className="grid grid-cols-2 grid-rows-5">
-							<label>Description</label>
-							<EditableText
-								value={
-									issueObject.Estimation
-										? issueObject.Estimation
-										: 'Enter estimation...'
-								}
-								{...form}
-								name="Description"
-								className="row-span-5 min-w-[180px] flex-grow rounded-md p-2"
-								onTextChange={text => {
-									setIssueObject({ ...issueObject, Description: text });
-								}}
-							/>
-						</div>
 					</div>
-					<div className="flex flex-row-reverse gap-10">
-						<button className="flex-end" onClick={() => onSubmit()}>
+					<div className="mt-10 flex flex-row-reverse gap-10">
+						<button
+							className="rounded-md bg-blue-500 px-4 py-2 text-white"
+							onClick={() => onSubmit()}
+						>
 							Save changes
 						</button>
 					</div>

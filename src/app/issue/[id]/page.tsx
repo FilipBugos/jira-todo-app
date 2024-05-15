@@ -22,10 +22,6 @@ const IssueOverviewPage = async ({ params }: IssueOverviewPageProps) => {
 	const sprints = await getSprintsOfUser();
 
 	const util = require('util');
-	console.log(`SPRINTS: ${sprints} ${sprints[1]}`);
-	console.log(util.inspect(sprints, false, null, true /* enable colors */));
-	console.log(`PROJECTS: ${projects[0]} ${projects[1]}`);
-	console.log(util.inspect(projects, false, null, true /* enable colors */));
 	return (
 		<IssueOverview
 			sprints={sprints.map(s => s)}

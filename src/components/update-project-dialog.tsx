@@ -58,8 +58,6 @@ const UpdateProjectDialog = ({
 		}
 	});
 
-	// console.log('participants', oldParticipants);
-
 	const reset = () => {
 		form.resetField('name');
 		form.resetField('description');
@@ -100,8 +98,6 @@ const UpdateProjectDialog = ({
 		const userEntity = users.find(u => u.id === user);
 		userEntity ? setUsers([...userEntities, userEntity]) : undefined;
 	};
-
-	console.log('projectName', projectEntity.Name);
 
 	return (
 		<FormProvider {...form}>

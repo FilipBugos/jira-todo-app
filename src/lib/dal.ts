@@ -13,7 +13,6 @@ export const verifySession = async () => {
 	const session = await decrypt(cookie);
 
 	const authSessionCookie = cookies().get('authjs.session-token')?.value;
-	
 	if (!session) {
 		if (!authSessionCookie) return { isAuth: false, userId: null };
 		const data = await db

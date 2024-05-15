@@ -21,7 +21,6 @@ export const FormSelectField = ({
 		register,
 		formState: { errors }
 	} = useFormContext();
-	console.log(data);
 	return (
 		<label
 			htmlFor={name}

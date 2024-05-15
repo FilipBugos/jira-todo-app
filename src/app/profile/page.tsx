@@ -15,8 +15,6 @@ export default async function Profile() {
 		return <h1>Not logged in</h1>;
 	}
 
-	console.log(loggedInUser);
-
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
 	const issues = await getIssuesJoined([
@@ -27,7 +25,7 @@ export default async function Profile() {
 	]);
 
 	return (
-		<div className="flex flex-col items-center gap-10">
+		<div className="flex flex-grow flex-col items-center gap-10">
 			<div>
 				<img
 					className="w-100 h-48 rounded-md object-cover"

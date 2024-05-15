@@ -8,7 +8,6 @@ const publicRoutes = ['/login', '/signup', '/'];
 
 export default async function middleware(req: NextRequest) {
 	const path = req.nextUrl.pathname;
-	console.log('path', path);
 	const isProtectedRoute = protectedRoutes.some(route =>
 		typeof route === 'function'
 			? route(path)
@@ -21,11 +20,9 @@ export default async function middleware(req: NextRequest) {
 		return;
 	}
 
-	console.log('isAuth', isAuth);
 	if (isProtectedRoute && !isAuth) {
 		return NextResponse.redirect(new URL('/login', req.nextUrl));
 	}
-	console.log('req.nextUrl.pathname = ', req.nextUrl.pathname);
 
 	if (isPublicRoute && isAuth && !req.nextUrl.pathname.startsWith('/')) {
 		return NextResponse.redirect(new URL('/', req.nextUrl));

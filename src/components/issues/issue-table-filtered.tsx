@@ -30,34 +30,32 @@ const IssueTableFiltered = ({
 	hiddenColumns,
 	filters
 }: IssueTableFiltersProps) => {
-	const filteredIssues = useMemo(
-		() =>
-			issues.filter(
-				issue =>
-					issue.Summary.toLowerCase().includes(
-						filters.summaryFilter.toLowerCase()
-					) &&
-					issue.Description?.toLowerCase()?.includes(
-						filters.descriptionFilter.toLowerCase()
-					) &&
-					(filters.createdByFilter.length === 0 ||
-						filters.createdByFilter.some(
-							opt => opt.value === issue.CreatedBy?.id
-						)) &&
-					(filters.assignedToFilter.length === 0 ||
-						filters.assignedToFilter.some(
-							opt => opt.value === issue.AssignedTo?.id
-						)) &&
-					(filters.statusFilter.length === 0 ||
-						filters.statusFilter.some(
-							// TODO: remove parseInt
-							opt => opt.value === parseInt(issue.Status ?? '')
-						)) &&
-					(filters.labelFilter.length === 0 ||
-						filters.labelFilter.some(opt => opt.value === issue.Label))
-			),
-		[issues, filters]
-	);
+	const filteredIssues = useMemo(() => {
+		return issues.filter(issue => {
+			return (
+				issue.Summary.toLowerCase().includes(
+					filters.summaryFilter.toLowerCase()
+				) &&
+				issue.Description?.toLowerCase()?.includes(
+					filters.descriptionFilter.toLowerCase()
+				) &&
+				(filters.createdByFilter.length === 0 ||
+					filters.createdByFilter.some(
+						opt => opt.value === issue.CreatedBy?.id
+					)) &&
+				(filters.assignedToFilter.length === 0 ||
+					filters.assignedToFilter.some(
+						opt => opt.value === issue.AssignedTo?.id
+					)) &&
+				(filters.statusFilter.length === 0 ||
+					filters.statusFilter.some(
+						opt => opt.label === (issue.Status ?? '')
+					)) &&
+				(filters.labelFilter.length === 0 ||
+					filters.labelFilter.some(opt => opt.value === issue.Label))
+			);
+		});
+	}, [issues, filters]);
 
 	return (
 		<div>

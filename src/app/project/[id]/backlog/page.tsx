@@ -1,16 +1,21 @@
 import { and, eq, isNull } from 'drizzle-orm';
 
-import { getIssuesJoined, type IssueJoined } from '@/actions/issueActions';
+import {
+	getIssuesJoined,
+	getProjectsIssues,
+	type IssueJoined
+} from '@/actions/issueActions';
 import { getUsersOfTheProject } from '@/actions/userProjectActions';
 import { getLabels, getStatuses } from '@/lib/utils';
 import { getLoggedInUser } from '@/actions/authActions';
-import { getSprint } from '@/actions/sprintActions';
+import { endSprint, getSprint } from '@/actions/sprintActions';
 import { cn } from '@/lib/cn';
 
 import { issue, project, sprint } from '../../../../../db/schema';
 
 import SprintsComponent from './sprints-component';
 import CreateIssueDialog from './create-sprint-dialog';
+import { getAllProjectSprints } from '@/actions/projectActions';
 
 type ProjectOverviewPageProps = {
 	params: {
@@ -22,23 +27,25 @@ type ProjectOverviewPageProps = {
 export default async function Backlog({ params }: ProjectOverviewPageProps) {
 	const projectId = params.id;
 	const user = await getLoggedInUser();
-	const issues = await getIssuesJoined([
-		and(eq(project.ID, params.id), isNull(issue.SprintID))
-	]);
+	const issues = await getProjectsIssues([projectId]);
 	const users = (await getUsersOfTheProject(params.id)).map(u => u.user);
 	const currentSprints = await getSprint([eq(sprint.Project, projectId)]);
-	const newSprintNumber = currentSprints.length + 1;
-	const disableAddingSprint =
-		currentSprints.filter(s => s.EndDate > new Date()).length > 0;
 
-	const grouped = issues.reduce(
-		(acc: { [key: string | number]: IssueJoined[] }, issue) => {
-			acc[issue.SprintID ?? 'none'] = acc[issue.SprintID ?? 'none'] || [];
-			acc[issue.SprintID ?? 'none'].push(issue);
+	const grouped = currentSprints.reduce(
+		(acc: { [key: string | number]: IssueJoined[] }, sprint) => {
+			const sprintIssues = issues.filter(
+				issue => parseInt(issue.SprintID) === parseInt(sprint.ID)
+			);
+			acc[sprint.ID] = sprintIssues.length > 0 ? sprintIssues : [];
 			return acc;
 		},
 		{}
 	);
+	grouped['none'] = issues.filter(issue => issue.SprintID === null);
+	const newSprintNumber = currentSprints.length + 1;
+	const disableAddingSprint =
+		currentSprints.filter(s => s.EndDate > new Date()).length > 0;
+
 	return (
 		<div className="flex flex-col">
 			<div className="flex flex-row">
@@ -71,6 +78,7 @@ export default async function Backlog({ params }: ProjectOverviewPageProps) {
 				users={users}
 				labels={getLabels()}
 				statuses={getStatuses()}
+				activeSprint={currentSprints.find(s => s.EndDate > new Date())?.ID}
 			/>
 		</div>
 	);
