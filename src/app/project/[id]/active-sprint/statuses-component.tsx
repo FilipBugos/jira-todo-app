@@ -26,9 +26,6 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 		statusFilter: [],
 		labelFilter: []
 	});
-	console.log('localIssues', localIssues);
-	console.log('statuses', statuses);
-	console.log('issuesByStatus', localIssues[statuses[0].Name]);
 
 	const onDropUpdate = async (issue: InsertIssue) => {
 		await updateIssue(issue);

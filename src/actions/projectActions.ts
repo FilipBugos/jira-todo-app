@@ -30,7 +30,6 @@ export const getProjectByID = async (id: number) => {
 	if (id === null || id === undefined) {
 		throw new Error('Invalid id: id cannot be null or undefined');
 	}
-	console.log(`Fetching project with ID: ${id}`);
 	const response = await db.query.project.findFirst({
 		with: {
 			Members: {
@@ -80,8 +79,6 @@ export const updateProjectFromDialog = async (
 		nu => !oldUsers.some(onu => nu.id === onu.id)
 	);
 
-	console.log('removedUsers', removedUsers);
-	console.log('addedUsers', addedUsers);
 	// remove roles
 
 	for (const ru of removedUsers) {

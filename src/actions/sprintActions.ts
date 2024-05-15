@@ -43,7 +43,6 @@ export const getActiveUserSprint = async (filters?: SQL[]) => {
 
 export const endSprint = async (sprintId: number) => {
 	const sprintToUpdate = await db.query.sprint.findFirst(sprintId);
-	console.log('pica', sprintToUpdate);
 	await db
 		.update(sprint)
 		.set({ EndDate: new Date() })

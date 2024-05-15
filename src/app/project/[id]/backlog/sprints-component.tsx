@@ -110,9 +110,6 @@ const PageIssues = ({
 												ProjectID: foundItem.ProjectID
 											};
 
-											console.log(prev); // Call the updateIssue function with the transformed issue
-											console.log(prev[key]); // Call the updateIssue function with the transformed issue
-											console.log(prev[key][0]); // Call the updateIssue function with the transformed issue
 											onDropUpdate(transformedIssue);
 											return { ...prev };
 										});
@@ -158,9 +155,6 @@ const PageIssues = ({
 											ProjectID: foundItem.ProjectID
 										};
 
-										console.log(prev); // Call the updateIssue function with the transformed issue
-										console.log(prev[key]); // Call the updateIssue function with the transformed issue
-										console.log(prev[key][0]); // Call the updateIssue function with the transformed issue
 										onDropUpdate(transformedIssue);
 										return { ...prev };
 									});

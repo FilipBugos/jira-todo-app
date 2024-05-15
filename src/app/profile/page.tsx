@@ -15,8 +15,6 @@ export default async function Profile() {
 		return <h1>Not logged in</h1>;
 	}
 
-	console.log(loggedInUser);
-
 	// TODO: cut the list of projects/issues based on the relevance
 	const projects = await getAllUserProjects(loggedInUser.id);
 	const issues = await getIssuesJoined([

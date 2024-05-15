@@ -96,7 +96,6 @@ export async function signup(
 	};
 
 	try {
-		console.log('Validating..');
 		validatedFields = await SignupFormSchema.parseAsync({
 			name: formData.get('name') || '',
 			email: formData.get('email') || '',
@@ -108,14 +107,12 @@ export async function signup(
 				errors: error.flatten().fieldErrors
 			};
 		}
-		console.log('Error..');
 		return {
 			errors: {
 				message: 'An error occurred while validating values.'
 			}
 		};
 	}
-	console.log('Validated..');
 	const { name, email, password } = validatedFields;
 	const bcrypt = require('bcrypt');
 	const hashedPassword = await bcrypt.hash(password, 10);

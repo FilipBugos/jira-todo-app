@@ -17,9 +17,6 @@ export const FormInput = ({
 		formState: { errors }
 	} = useFormContext();
 
-	console.log('FormInput Name', name);
-	console.log(register);
-
 	return (
 		<div className="form-control w-full">
 			<div className="flex flex-col">

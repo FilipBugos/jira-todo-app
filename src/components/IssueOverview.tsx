@@ -38,15 +38,7 @@ export const IssueOverview = ({
 		return <div>Error</div>;
 	}
 
-	console.log(issue);
-	console.log(`projects in overwiew: ${projects}`);
-	console.log(sprints);
-	console.log(issue);
-	console.log(`projects in overwiew: ${projects}`);
-	console.log(sprints);
-
 	const onSubmit = () => {
-		console.log(issueObject);
 		updateIssue(issueObject);
 	};
 

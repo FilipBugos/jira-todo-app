@@ -14,14 +14,9 @@ type SidebarType = {
 
 const Sidebar = async ({ projectId }: SidebarType) => {
 	const loggedInUser = await getLoggedInUser();
-	console.log('Project ID');
-	console.log(projectId);
 
 	const project = await getProjectByID(projectId);
 	const users = await getUser();
-	console.log('Sidebar - project');
-	console.log(project);
-
 	if (!project) {
 		return <div>Error</div>;
 	}

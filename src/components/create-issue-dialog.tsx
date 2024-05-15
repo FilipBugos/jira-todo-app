@@ -68,8 +68,6 @@ const CreateIssueDialog = ({
 		resolver: zodResolver(formSchema)
 	});
 
-	console.log('Sprint to select', sprintsToSelect);
-
 	const reset = () => {
 		form.resetField('project');
 		form.resetField('summary');
@@ -116,8 +114,6 @@ const CreateIssueDialog = ({
 			)
 			.call();
 	}
-
-	console.log(sprintsToSelect);
 
 	return (
 		<FormProvider {...form}>

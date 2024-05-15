@@ -23,7 +23,6 @@ export const createIssue = async (data: InsertIssue) => {
 };
 
 export const getIssuesJoined = async (filters?: SQL[]) => {
-	console.log('STARTISSUEJOINED');
 	const issues = await db.query.issue.findMany({
 		with: {
 			Sprint: true,
@@ -33,8 +32,6 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
 		},
 		where: filters ? and(...filters) : undefined
 	});
-
-	console.log('Issues', issues);
 
 	return issues.map(issue => ({
 		...issue,
