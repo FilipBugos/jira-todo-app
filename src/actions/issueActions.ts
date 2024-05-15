@@ -1,6 +1,7 @@
 'use server';
 
-import { and, eq, type SQL } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
+import { and, eq, or, type SQL } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 import { db } from '../../db/db';
@@ -22,7 +23,6 @@ export const createIssue = async (data: InsertIssue) => {
 };
 
 export const getIssuesJoined = async (filters?: SQL[]) => {
-	console.log('STARTISSUEJOINED');
 	const issues = await db.query.issue.findMany({
 		with: {
 			Sprint: true,
@@ -32,8 +32,6 @@ export const getIssuesJoined = async (filters?: SQL[]) => {
 		},
 		where: filters ? and(...filters) : undefined
 	});
-
-	console.log('Issues', issues);
 
 	return issues.map(issue => ({
 		...issue,
@@ -67,6 +65,26 @@ export const assignIssueToSprint = async (
 		.where(eq(issue.ID, issueId))
 		.returning({ updatedId: issue.ID });
 	revalidatePath('/');
+};
+
+export const getProjectsIssues = async (projectsIds: number[]) => {
+	const issues = await db.query.issue.findMany({
+		with: {
+			Sprint: true,
+			Project: true,
+			CreatedBy: true,
+			AssignedTo: true
+		},
+		where: or(...projectsIds.map(projectId => eq(issue.ProjectID, projectId)))
+	});
+
+	return issues.map(issue => ({
+		...issue,
+		CreatedBy: issue.CreatedBy,
+		AssignedTo: issue.AssignedTo,
+		Sprint: issue.Sprint,
+		Project: issue.Project
+	}));
 };
 
 export type IssueJoined = Awaited<ReturnType<typeof getIssuesJoined>>[number];

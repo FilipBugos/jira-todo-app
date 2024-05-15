@@ -17,7 +17,6 @@ type PageIssuesProps = {
 };
 
 const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
-	const [prevIssues, setPrevIssues] = useState(issues);
 	const [localIssues, setLocalIssues] = useState(issues);
 	const [filters, setFilters] = useState<FilterValues>({
 		summaryFilter: '',
@@ -27,16 +26,13 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 		statusFilter: [],
 		labelFilter: []
 	});
-	console.log('localIssues', localIssues);
-	console.log('statuses', statuses);
-	console.log('issuesByStatus', localIssues[statuses[0].Name]);
 
 	const onDropUpdate = async (issue: InsertIssue) => {
 		await updateIssue(issue);
 	};
 
 	return (
-		<div className="m-4 w-full">
+		<div className="m-4">
 			<IssueFilter
 				usersOptions={users.map(item => ({
 					value: item.id,
@@ -54,7 +50,7 @@ const PageIssues = ({ issues, users, labels, statuses }: PageIssuesProps) => {
 			/>
 			<div className="ml-10 flex gap-5">
 				{statuses.map(key => (
-					<div className="w-1/5">
+					<div className="w-4/12">
 						<h1>Status: {key.Name}</h1>
 						<IssueTableFiltered
 							key={key.Name}

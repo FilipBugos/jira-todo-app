@@ -69,8 +69,7 @@ const IssueTableFilters = ({
 						)) &&
 					(filters.statusFilter.length === 0 ||
 						filters.statusFilter.some(
-							// TODO: remove parseInt
-							opt => opt.value === parseInt(issue.Status ?? '')
+							opt => opt.label === (issue.Status ?? '')
 						)) &&
 					(filters.labelFilter.length === 0 ||
 						filters.labelFilter.some(opt => opt.value === issue.Label))
