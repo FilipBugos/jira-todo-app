@@ -70,7 +70,8 @@ export const authConfig = {
 	}),
 	providers,
 	pages: {
-		signIn: '/login'
+		signIn: '/login',
+		signOut: "/signout",
 	},
 	session: { strategy: 'database' },
 	callbacks: {
