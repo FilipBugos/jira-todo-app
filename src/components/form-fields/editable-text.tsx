@@ -40,7 +40,7 @@ const EditableText = ({
 					type="text"
 					value={value}
 					className={cn(
-						`${props.className} , "input input-bordered min-w-20" min-h-20 w-full`
+						`${props.className} , "input input-bordered min-w-20" w-full`
 					)}
 					{...register(name, {
 						onChange: handleInputChange,
@@ -53,7 +53,7 @@ const EditableText = ({
 				<span
 					onClick={handleTextClick}
 					className={cn(
-						`${props.className} , "input input-bordered min-w-20" min-h-20 w-full`
+						`${props.className} , "input input-bordered min-w-20" w-full`
 					)}
 				>
 					{value}
