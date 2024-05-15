@@ -44,7 +44,7 @@ export const IssueOverview = ({
 
 	return (
 		<FormProvider {...form}>
-			<form>
+			<form className=" flex-grow ">
 				<div className="flex flex-col items-center justify-center">
 					<div className="mt-2 flex w-8/12 flex-col gap-4">
 						<LabelSelectField

@@ -7,7 +7,7 @@ import logo from '/public/logo.png';
 import AuthProviders from '@/components/auth-providers';
 
 const SignupPage = () => (
-	<main className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+	<main className="flex flex-grow flex-col items-center justify-center bg-gray-100">
 		<h1 className="mb-6 flex-col text-3xl font-semibold">Sign Up</h1>
 		<div className="relative mx-auto flex w-full max-w-md flex-col rounded-lg bg-white p-8 shadow-lg">
 			<div className="mb-6 flex justify-center">

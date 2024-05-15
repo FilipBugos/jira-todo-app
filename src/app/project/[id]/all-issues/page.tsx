@@ -15,7 +15,8 @@ type ProjectOverviewPageProps = {
 };
 
 export default async function AllIsues({ params }: ProjectOverviewPageProps) {
-	const issues = await getProjectsIssues([params.id]);
+	const projectId = params.id;
+	const issues = await getProjectsIssues([projectId]);
 	const users = (await getUsersOfTheProject(params.id)).map(u => u.user);
 
 	return (

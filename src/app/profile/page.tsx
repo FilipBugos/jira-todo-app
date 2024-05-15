@@ -25,7 +25,7 @@ export default async function Profile() {
 	]);
 
 	return (
-		<div className="flex flex-col items-center gap-10">
+		<div className="flex flex-grow flex-col items-center gap-10">
 			<div>
 				<img
 					className="w-100 h-48 rounded-md object-cover"

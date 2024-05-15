@@ -26,9 +26,9 @@ export default async function Home() {
 	const issues = await getProjectsIssues(projects.map(p => p.project.ID));
 
 	return (
-		<main className="h-full">
+		<main className="h-full w-full">
 			<h1 className="m-10 text-4xl">Projects</h1>
-			<div className="flex flex-col space-y-10">
+			<div className="flex w-full flex-grow flex-col space-y-10">
 				{projects.map(p => (
 					<div key={p.project.ID}>
 						<div className="mx-10 mb-5 mt-10 flex h-16 items-center rounded-lg bg-gray-600">
