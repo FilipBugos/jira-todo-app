@@ -1,3 +1,4 @@
+import { checkIsUsernameUnique } from '@/actions/userActions';
 import { z } from 'zod';
 
 export const SignupFormSchema = z.object({
@@ -5,7 +6,16 @@ export const SignupFormSchema = z.object({
 		.string()
 		.min(2, { message: 'Name must be at least 2 characters long.' })
 		.trim(),
-	email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+	email: z
+		.string()
+		.email({ message: 'Please enter a valid email.' })
+		.trim()
+		.refine(async (email) => {
+		  const isUnique = await checkIsUsernameUnique(email);
+		  return isUnique;
+		}, {
+		  message: "Username already exists in the database",
+		}),
 	password: z
 		.string()
 		.min(8, { message: 'Be at least 8 characters long' })

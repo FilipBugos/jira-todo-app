@@ -10,10 +10,17 @@ import { getUserByEmail } from "@/actions/userActions";
 import { db } from "./db/db";
 import { accounts, sessions, user, verificationTokens } from "./db/schema";
 
+export const protectedRoutes = [
+	'/profile',
+	'/issue',
+	'/projects',
+	'/logout',
+	'/active-sprint',
+	'/all-issues',
+	'/backlog'
+];
 const getIsProtectedPath = (path: string) => {
-  const paths = ["/"];
-
-  return paths.some((p) => path.startsWith(p));
+  return protectedRoutes.some((p) => path.startsWith(p));
 };
 
 const providers: Provider[] = [
@@ -36,7 +43,7 @@ const providers: Provider[] = [
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
         if (passwordsMatch) {
-          return user; // Return the user object
+          return user;
         }
       }
       return null;
@@ -75,15 +82,12 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isProtected = getIsProtectedPath(nextUrl.pathname);
-      console.log("isLoggedIn", isLoggedIn);
-      console.log("isProtected", isProtected);
-      // if (!isLoggedIn && isProtected) {
-      //   const redirectUrl = new URL("/login", nextUrl.origin);
-      //   console.log("nextUrl", nextUrl);
-      //   redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
-
-      //   return Response.redirect(redirectUrl);
-      // }
+      if (!isLoggedIn && isProtected) {
+        const redirectUrl = new URL("/login", nextUrl.origin);
+        console.log("nextUrl", nextUrl);
+        redirectUrl.searchParams.append("callbackUrl", nextUrl.href);
+        return Response.redirect(redirectUrl);
+      }
 
       return true;
     },
