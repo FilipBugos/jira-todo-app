@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/dialog';
 
 import {
-	type SelectUser,
 	type InsertIssue,
-	type SelectSprint
+	type SelectSprint,
+	type SelectUser
 } from '../../db/schema';
 
 import { LabelInputField } from './form-fields/label-input-field';

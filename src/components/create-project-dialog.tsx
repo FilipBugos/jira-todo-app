@@ -5,31 +5,17 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { X } from 'lucide-react';
 
 import {
 	createProjectFromDialog,
 	type ProjectWithUserProjecs
 } from '@/actions/projectActions';
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogFooter,
-	DialogTitle,
-	DialogTrigger
-} from '@/components/ui/dialog';
 import { revalidateRootLayout } from '@/common/revalidate';
 import { ProjectForm } from '@/components/project-form';
 
 import { type SelectUser } from '../../db/schema';
 
-import {
-	AddParticipantToProject,
-	type ParticipantsType
-} from './add-participant-to-project-form';
-import { FormInput } from './form-fields/form-input';
-import { LabelInputField } from './form-fields/label-input-field';
+import { type ParticipantsType } from './add-participant-to-project-form';
 
 type CreateProjectDialogType = {
 	users: SelectUser[];

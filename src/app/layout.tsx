@@ -6,7 +6,6 @@ import { Inter } from 'next/font/google';
 import TopNavBar from '@/components/nav/top-nav-bar';
 
 import { Providers } from './providers';
-import { getLoggedInUser } from '@/actions/authActions';
 
 const inter = Inter({ subsets: ['latin'] });
 

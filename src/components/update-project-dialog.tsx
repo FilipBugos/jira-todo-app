@@ -7,21 +7,13 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 import {
-	createProjectFromDialog,
 	type getProjectByIDType,
-	type ProjectWithUserProjecs,
 	updateProjectFromDialog
 } from '@/actions/projectActions';
 import { revalidateProjectLayout } from '@/common/revalidate';
 import { ProjectForm } from '@/components/project-form';
-import type { CreateProjectSchema } from '@/components/create-project-dialog';
 
-import {
-	InsertProject,
-	type SelectProject,
-	type SelectUser,
-	type SelectUserProject
-} from '../../db/schema';
+import { type SelectProject, type SelectUser } from '../../db/schema';
 
 import { type ParticipantsType } from './add-participant-to-project-form';
 

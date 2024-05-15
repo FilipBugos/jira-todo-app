@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
 
-import { FormInput } from './form-fields/form-input';
 import { FormSelectField } from './form-fields/form-select';
 
 export type ParticipantsType = {
@@ -63,6 +62,7 @@ export const AddParticipantToProject = ({
 			.call();
 	};
 
+	// @ts-ignore
 	return (
 		<FormProvider {...form}>
 			<div className="flex flex-row gap-10">

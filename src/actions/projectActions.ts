@@ -2,7 +2,6 @@
 
 import { and, count, eq, type SQL } from 'drizzle-orm';
 
-import { createSprint } from '@/actions/sprintActions';
 import { revalidateProjectLayout } from '@/common/revalidate';
 
 import { db } from '../../db/db';
@@ -11,7 +10,6 @@ import {
 	project,
 	type SelectUser,
 	sprint,
-	user,
 	userProject
 } from '../../db/schema';
 
