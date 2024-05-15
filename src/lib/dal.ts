@@ -12,22 +12,16 @@ export const verifySession = async () => {
   const cookie = cookies().get("session")?.value;
   const session = await decrypt(cookie);
 
-//   const authSessionCookie = cookies().get("authjs.session-token")?.value;
-//   console.log("authSessionCookie", authSessionCookie);
-//   if (!authSessionCookie) {
-
-//     console.log(
-// 		"authenticatedUser",
-// 		!!authenticatedUser,
-// 		authenticatedUser?.userId,
-// 	  );
-//     const data = await db
-//       .select()
-//       .from(sessions)
-//       .where(eq(sessions.sessionToken, authSessionCookie));
-//     const authenticatedUser = data[0];
-//     return { isAuth: !!authenticatedUser, userId: authenticatedUser?.userId };
-//   }
+  const authSessionCookie = cookies().get("authjs.session-token")?.value;
+  if (!cookie) {
+    if (!authSessionCookie) return { isAuth: false, userId: null };
+    const data = await db
+      .select()
+      .from(sessions)
+      .where(eq(sessions.sessionToken, authSessionCookie));
+    const authenticatedUser = data[0];
+    return { isAuth: !!authenticatedUser, userId: authenticatedUser?.userId };
+  }
   return { isAuth: !!session, userId: session?.userId };
 };
 

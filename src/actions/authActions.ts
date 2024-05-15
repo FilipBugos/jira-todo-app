@@ -11,6 +11,7 @@ import { verifySession } from "@/lib/dal";
 
 import { db } from "../../db/db";
 import { user } from "../../db/schema";
+import { z, ZodError } from "zod";
 
 export async function authenticate(
   prevState: string | undefined,
@@ -73,23 +74,49 @@ export async function ownSignIn(
   await createSession(returnedUser.id);
   redirect("/profile");
 }
+
+interface SignupError {
+  errors: {
+    name?: string;
+    email?: string;
+    password?: string;
+    message?: string;
+  };
+}
+
+
 export async function signup(
   prevState: string | undefined,
   formData: FormData,
-) {
-  const validatedFields = SignupFormSchema.safeParse({
-    name: formData.get("name"),
-    username: formData.get("email"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-
-  if (!validatedFields.success) {
+): Promise<SignupError> {
+  let validatedFields: z.infer<typeof SignupFormSchema> = {
+    name: formData.get("name") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+  
+  try {
+    console.log("Validating..")
+    validatedFields = await SignupFormSchema.parseAsync({
+      name: formData.get("name") || "",
+      email: formData.get("email") || "",
+      password: formData.get("password") || "",
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return {
+        errors: error.flatten().fieldErrors,
+      };
+    }
+    console.log("Error..")
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: {
+        message:  "An error occurred while validating values.",
+      },
     };
   }
-  const { name, email, password } = validatedFields.data;
+  console.log("Validated..")
+  const { name, email, password } = validatedFields;
   const bcrypt = require("bcrypt");
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -107,7 +134,9 @@ export async function signup(
 
   if (!createdUser) {
     return {
-      message: "An error occurred while creating your account.",
+      errors: {
+        message: "An error occurred while creating your account.",
+      },
     };
   }
 
@@ -117,7 +146,7 @@ export async function signup(
 
 export async function logout() {
   deleteSession();
-  await signOut(redirect("/"));
+  redirect("/");
 }
 
 export const getLoggedInUser = async () => {

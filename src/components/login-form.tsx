@@ -17,26 +17,41 @@ const LoginForm = () => {
 
   return (
     <FormProvider {...form}>
-      <form action={dispatch} className="space-y-3">
-        <FormInput name="email" type="email" placeholder="example@google.com" />
-        <FormInput name="password" type="password" placeholder="Password" />
+      <form action={dispatch}>
+        <FormInput
+          name="email"
+          type="email"
+          placeholder="example@google.com"
+          className="w-full p-3 border border-gray-300 rounded-md"
+        />
+        <FormInput
+          name="password"
+          type="password"
+          placeholder="Password"
+          className="w-full p-3 border border-gray-300 rounded-md mb-4"
+        />
         <LoginButton />
-        <div
-          className="flex h-8 items-end space-x-1"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {errorMessage && (
-            <>
-              <p className="text-sm text-red-500">
-                {errorMessage.errors?.email}
-              </p>
-              <p className="text-sm text-red-500">
-                {errorMessage.errors?.password}
-              </p>
-            </>
-          )}
-        </div>
+
+        {errorMessage && (
+          <>
+            <div
+              className="flex flex-col items-center mt-4"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {errorMessage.errors?.email && (
+                <p className="text-sm text-red-500">
+                  {errorMessage.errors?.email}
+                </p>
+              )}
+              {errorMessage.errors?.password && (
+                <p className="text-sm text-red-500">
+                  {errorMessage.errors?.password}
+                </p>
+              )}
+            </div>
+          </>
+        )}
       </form>
     </FormProvider>
   );
@@ -46,7 +61,10 @@ const LoginButton = () => {
   const { pending } = useFormStatus();
 
   return (
-    <Button className="mt-4 w-full" aria-disabled={pending}>
+    <Button
+      className="w-full p-3 mt-4 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+      aria-disabled={pending}
+    >
       {pending ? "Logging in..." : "Log In"}
     </Button>
   );
