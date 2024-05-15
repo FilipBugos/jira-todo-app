@@ -126,23 +126,25 @@ export const getAllUserProjects = async (userID: string) => {
 		}));
 };
 
-export const assignCurrentSprint = async (projectId: number, sprintId: number) => {
+export const assignCurrentSprint = async (
+	projectId: number,
+	sprintId: number
+) => {
 	const projectEntity = await getProject([eq(project.ID, projectId)]);
 	return await db
-    .update(project)
-    .set({
-      ...projectEntity,
-      CurrentSprint: sprintId
-    })
-    .where(eq(project.ID, projectId));
+		.update(project)
+		.set({
+			...projectEntity,
+			CurrentSprint: sprintId
+		})
+		.where(eq(project.ID, projectId));
 };
 
-export const getAllProjectSprints = async (projectId: number) => {
-	return await db
-	.select({ count: count() })
-	.from(sprint)
-	.where(eq(sprint.Project, projectId))
-};
+export const getAllProjectSprints = async (projectId: number) =>
+	await db
+		.select({ count: count() })
+		.from(sprint)
+		.where(eq(sprint.Project, projectId));
 
 export type ProjectsWithUsers = Awaited<
 	ReturnType<typeof getAllUserProjects>
