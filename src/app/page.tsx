@@ -1,16 +1,6 @@
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-
-import { getIssuesJoined, type IssueJoined } from '@/actions/issueActions';
-import { getUser } from '@/actions/userActions';
-import { getLabels, getStatuses } from '@/lib/utils';
-import { auth } from '@/auth';
-import { getUserProject } from '@/actions/userProjectActions';
 import { getAllUserProjects } from '@/actions/projectActions';
 import { getLoggedInUser } from '@/actions/authActions';
 import { PageLink } from '@/components/nav/page-link';
-
-import PageIssues from '@/app/(overview)/backlog/sprints-component';
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, react/function-component-definition
 export default async function Home() {

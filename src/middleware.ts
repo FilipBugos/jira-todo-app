@@ -1,9 +1,8 @@
-import { auth as middleware } from 'next-auth/middleware';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { protectedRoutes } from '../auth.config';
-import { verifySession } from './lib/dal';
 
+import { verifySession } from './lib/dal';
 
 const publicRoutes = ['/login', '/signup', '/'];
 
@@ -19,23 +18,16 @@ export default async function middleware(req: NextRequest) {
 
 	const { isAuth, userId } = await verifySession();
 	if (!isAuth || !userId) {
-	  return;
+		return;
 	}
 
 	console.log('isAuth', isAuth);
 	if (isProtectedRoute && !isAuth) {
 		return NextResponse.redirect(new URL('/login', req.nextUrl));
 	}
-	console.log(
-		"req.nextUrl.pathname = ",
-		req.nextUrl.pathname
-	);
+	console.log('req.nextUrl.pathname = ', req.nextUrl.pathname);
 
-	if (
-		isPublicRoute &&
-		isAuth &&	
-		!req.nextUrl.pathname.startsWith('/') 
-	) {
+	if (isPublicRoute && isAuth && !req.nextUrl.pathname.startsWith('/')) {
 		return NextResponse.redirect(new URL('/', req.nextUrl));
 	}
 	return NextResponse.next();

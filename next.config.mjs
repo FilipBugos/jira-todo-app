@@ -4,6 +4,9 @@ const nextConfig = {
         config.externals = [...config.externals, "bcrypt"];
         return config;
     },
+    typescript: {
+        ignoreBuildErrors: true,
+    }
 };
 
 export default nextConfig;

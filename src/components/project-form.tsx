@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import {
 	Dialog,
@@ -15,7 +15,6 @@ import {
 	AddParticipantToProject,
 	type ParticipantsType
 } from '@/components/add-participant-to-project-form';
-import { type CreateProjectSchema } from '@/components/create-project-dialog';
 
 import { type SelectUser } from '../../db/schema';
 

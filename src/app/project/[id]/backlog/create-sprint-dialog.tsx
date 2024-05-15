@@ -1,10 +1,12 @@
 'use client';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { array, z } from 'zod';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
+import { LabelSelectField } from '@/components/form-fields/label-select-field';
 import {
 	Dialog,
 	DialogClose,
@@ -13,14 +15,12 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import { InsertSprint, issue, SelectIssue, SelectSprint, SelectUser } from '../../../../../db/schema';
-import { LabelSelectField } from '@/components/form-fields/label-select-field';
-import { useRouter } from 'next/navigation';
 import { LabelInputField } from '@/components/form-fields/label-input-field';
 import { createSprint } from '@/actions/sprintActions';
 import { assignIssueToSprint } from '@/actions/issueActions';
-import { assignCurrentSprint, getAllProjectSprints } from '@/actions/projectActions';
+import { assignCurrentSprint } from '@/actions/projectActions';
 
+import { type InsertSprint, type SelectIssue } from '../../../../../db/schema';
 
 type CreateSprintDialogType = {
 	trigger: React.ReactNode;
@@ -31,13 +31,14 @@ type CreateSprintDialogType = {
 
 const formSchema = z.object({
 	issues: z
-		.array(z.string()
-		)
+		.array(z.string())
 		.min(1, { message: 'Sprint has to contain at least one issue' }),
-	enddate: z.string().min(1, { message: "End date has to be inserted."}).transform((str) => new Date(str)).refine((date) => {
-		return date > new Date(Date.now());
-	  }, "The date must be after today"),
-	});
+	enddate: z
+		.string()
+		.min(1, { message: 'End date has to be inserted.' })
+		.transform(str => new Date(str))
+		.refine(date => date > new Date(Date.now()), 'The date must be after today')
+});
 
 export type CreateSprintSchema = z.infer<typeof formSchema>;
 
@@ -52,7 +53,6 @@ const CreateIssueDialog = ({
 		resolver: zodResolver(formSchema)
 	});
 
-
 	const reset = () => {
 		form.resetField('issues');
 	};
@@ -66,17 +66,20 @@ const CreateIssueDialog = ({
 						Name: `Sprint ${newSprintNumber}`,
 						Project: projectId,
 						StartDate: new Date(),
-						EndDate: values.enddate,
+						EndDate: values.enddate
 					};
 
-					try{
-						// todo: do it transactional 
+					try {
+						// todo: do it transactional
 						// create new sprint
 						const sprintResult = await createSprint(sprintEntity);
 						// update issues
 						values.issues.forEach(async issueId => {
-							await assignIssueToSprint(Number(issueId), sprintResult.at(0)?.id);
-						})
+							await assignIssueToSprint(
+								Number(issueId),
+								sprintResult.at(0)?.id
+							);
+						});
 						// update project current sprint id
 						await assignCurrentSprint(projectId, sprintResult.at(0)?.id);
 
@@ -90,7 +93,7 @@ const CreateIssueDialog = ({
 						}
 					}
 				},
-				(e) => {
+				e => {
 					console.log(e);
 					toast.error('Validation error, correct non-valid fields.');
 				}
@@ -125,7 +128,7 @@ const CreateIssueDialog = ({
 										key: issue.ID,
 										value: issue.Summary
 									}))}
-									className="min-w-[230px] flex-grow rounded-md p-2 min-h-[230px]"
+									className="min-h-[230px] min-w-[230px] flex-grow rounded-md p-2"
 									onChange={selectedOption => {
 										// const selectedProject = Number(selectedOption.target.value);
 										// setSelectedProject(selectedProject);
@@ -136,7 +139,7 @@ const CreateIssueDialog = ({
 									// value={selectedProject}
 									defaultValue=""
 								/>
-								<LabelInputField type='date' label="End Date" name='enddate' />
+								<LabelInputField type="date" label="End Date" name="enddate" />
 							</div>
 							<DialogFooter>
 								<div className="flex flex-row-reverse gap-10">

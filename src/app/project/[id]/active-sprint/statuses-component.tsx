@@ -1,5 +1,5 @@
 'use client';
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 
 import IssueFilter, {
 	type FilterValues
@@ -7,7 +7,7 @@ import IssueFilter, {
 import IssueTableFiltered from '@/components/issues/issue-table-filtered';
 import { type IssueJoined, updateIssue } from '@/actions/issueActions';
 
-import { InsertIssue, type SelectUser } from '../../../../db/schema';
+import { type InsertIssue, type SelectUser } from '../../../../db/schema';
 
 type PageIssuesProps = {
 	issues: { [key: string | number]: IssueJoined[] };
