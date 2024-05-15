@@ -19,7 +19,8 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from '@/components/ui/dialog';
-import revalidateRootLayout from '@/common/revalidate';
+import { revalidateRootLayout } from '@/common/revalidate';
+import { ProjectForm } from '@/components/project-form';
 
 import { type SelectUser } from '../../db/schema';
 
@@ -49,7 +50,9 @@ const CreateProjectDialog = ({
 	loggedInUser
 }: CreateProjectDialogType) => {
 	const [participants, setParticipants] = useState<ParticipantsType[]>([]);
-	const [userEntities, setUsers] = useState<SelectUser[]>(users);
+	const [userEntities, setUsers] = useState<SelectUser[]>(
+		users.filter(u => u.id !== loggedInUser.id)
+	);
 
 	const form = useForm<CreateProjectSchema>({
 		resolver: zodResolver(formSchema)
@@ -59,12 +62,12 @@ const CreateProjectDialog = ({
 		form.resetField('name');
 		form.resetField('description');
 		setParticipants([]);
-		setUsers(users);
+		setUsers(users.filter(u => u.id !== loggedInUser.id));
 	};
 
 	// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 	async function submit() {
-		form
+		await form
 			.handleSubmit(
 				async userProject => {
 					const entity: ProjectWithUserProjecs = {
@@ -77,17 +80,16 @@ const CreateProjectDialog = ({
 						},
 						UserProjectEntities: [
 							...participants.map(p => ({
-								User: p.user.id,
-								Role: p.role
+								User: p.user.id
 							})),
-							{ User: loggedInUser.id, Role: 'owner' }
+							{ User: loggedInUser.id }
 						]
 					};
 
 					try {
 						await createProjectFromDialog(entity);
 						toast.success('Project was successfully created');
-						revalidateRootLayout();
+						await revalidateRootLayout();
 						reset();
 						document.getElementById('closeDialogBtn')?.click();
 					} catch (e) {
@@ -117,87 +119,17 @@ const CreateProjectDialog = ({
 
 	return (
 		<FormProvider {...form}>
-			<form onSubmit={() => console.log('here2')}>
-				<div className="">
-					<Dialog onOpenChange={reset}>
-						<DialogTrigger asChild>{trigger}</DialogTrigger>
-						<DialogContent
-							onInteractOutside={e => {
-								e.preventDefault();
-							}}
-							className="DialogContent w-5/12 bg-slate-300"
-						>
-							<DialogTitle className="DialogTitle mb-5 text-xl">
-								Create Project
-							</DialogTitle>
-							<div className="mt-2 flex flex-col gap-4">
-								<LabelInputField label="Name" name="name" type="text" />
-
-								<label className="mt-5">Choose project participants</label>
-
-								{participants.map(p => (
-									<div key={p.user.id} className="flex flex-row gap-10">
-										<FormInput
-											key={p.user.id}
-											disabled
-											name="ParticipantID"
-											value={p.user.name}
-											className="grid-col-0 min-h-[40px] min-w-[160px] rounded-md p-2"
-										/>
-										<FormInput
-											key={p.user.id}
-											disabled
-											name="ParticipantID"
-											value={p.role}
-											className="min-h-[40px] min-w-[160px] flex-grow rounded-md p-2"
-										/>
-										<button
-											onClick={() => {
-												deleteUser(p.user.id);
-											}}
-											className="max-w-[30px]"
-										>
-											<X />
-										</button>
-									</div>
-								))}
-
-								<AddParticipantToProject
-									data={userEntities.map(u => ({ key: u.id, value: u.name }))}
-									setData={selectUser}
-								/>
-
-								<div className="mt-5 grid grid-cols-2 grid-rows-5">
-									<label>Description</label>
-									<textarea
-										{...form.register('description')}
-										className="row-span-5 min-w-[180px] flex-grow rounded-md p-2"
-										placeholder="Enter description..."
-									/>
-								</div>
-							</div>
-							<DialogFooter>
-								<div className="flex flex-row-reverse gap-10">
-									<button className="flex-end" onClick={() => submit()}>
-										Save changes
-									</button>
-									<DialogClose asChild>
-										<button
-											id="closeDialogBtn"
-											onClick={() => {
-												reset();
-											}}
-											className="flex-end"
-										>
-											Close
-										</button>
-									</DialogClose>
-								</div>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
-				</div>
-			</form>
+			<ProjectForm
+				label="Create new project"
+				loggedInUser={loggedInUser}
+				reset={reset}
+				trigger={trigger}
+				submit={submit}
+				participants={participants}
+				userEntities={userEntities}
+				selectUser={selectUser}
+				deleteUser={deleteUser}
+			/>
 		</FormProvider>
 	);
 };

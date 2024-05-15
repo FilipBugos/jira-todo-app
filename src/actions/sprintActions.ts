@@ -1,31 +1,32 @@
-"use server";
+'use server';
 
-import { and, type SQL } from "drizzle-orm";
+import { and, type SQL } from 'drizzle-orm';
 
-import { db } from "../../db/db";
-import { type InsertSprint, issue, sprint } from "../../db/schema";
+import { db } from '../../db/db';
+import { type InsertSprint, issue, sprint } from '../../db/schema';
+
 
 export const getSprint = async (filters?: SQL[]) =>
-  await db
-    .select()
-    .from(sprint)
-    .where(filters ? and(...filters) : undefined);
+	await db
+		.select()
+		.from(sprint)
+		.where(filters ? and(...filters) : undefined);
 
 export const createSprint = async (data: InsertSprint) =>
-  await db.insert(sprint).values(data).returning({id: sprint.ID});
+	await db.insert(sprint).values(data).returning({id: sprint.ID});
 
 // get all sprint a user may be included in
 export const getSprintsOfUser = async (filters?: SQL[]) =>
-  await db.query.sprint.findMany({
-    with: {
-      Project: {
-        with: {
-          Members: true
-        }
-      },
-    },
-    where: filters ? and(...filters) : undefined
-  });
+	await db.query.sprint.findMany({
+		with: {
+			Project: {
+				with: {
+					Members: true
+				}
+			}
+		},
+		where: filters ? and(...filters) : undefined
+	});
 
 /*    .select({ sprint })
     .from(sprint)
@@ -34,5 +35,5 @@ export const getSprintsOfUser = async (filters?: SQL[]) =>
     .where(filters ? and(...filters) : undefined);
 */
 export type SprintsWithUsers = Awaited<
-  ReturnType<typeof getSprintsOfUser>
+	ReturnType<typeof getSprintsOfUser>
 >[number];

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 import { type ProjectsWithUsers } from '@/actions/projectActions';
 import { getLabels, getStatuses } from '@/lib/utils';
@@ -18,11 +19,14 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog';
 
-import { SelectUser, type InsertIssue, type SelectSprint } from '../../db/schema';
+import {
+	type SelectUser,
+	type InsertIssue,
+	type SelectSprint
+} from '../../db/schema';
 
 import { LabelInputField } from './form-fields/label-input-field';
 import { LabelSelectField } from './form-fields/label-select-field';
-import { useRouter } from 'next/navigation';
 
 type CreateIssueDialogType = {
 	projects: ProjectsWithUsers[];
@@ -42,11 +46,7 @@ const formSchema = z.object({
 		.min(3, { message: 'Issue has to contain summary.' })
 		.default(''),
 	description: z.string().optional().default(''),
-	sprint: z
-		.string()
-		// .min(1, { message: 'Issue has to be assigned to sprint or backlog.' })
-		.transform(Number)
-		.default(''),
+	sprint: z.string().transform(Number).optional().default(''),
 	label: z.string().optional().transform(Number).default(''),
 	assignee: z.string().optional().default(''),
 	storyPoints: z.string().optional().transform(Number).default('')
@@ -178,7 +178,8 @@ const CreateIssueDialog = ({
 									name="assignee"
 									data={projects
 										.filter(
-											p => p.project?.ID === selectedProject && p.project.Members
+											p =>
+												p.project?.ID === selectedProject && p.project.Members
 										)
 										.map(p => [...p.project.Members])
 										.flat()

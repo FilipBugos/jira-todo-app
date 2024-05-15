@@ -7,46 +7,46 @@ import {
 } from 'drizzle-orm/sqlite-core';
 import type { AdapterAccount } from 'next-auth/adapters';
 
-export const user = sqliteTable("user", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  username: text("username"),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
-  image: text("image"),
-  role: text("role").notNull().default("user"),
-  password: text("password"),
+export const user = sqliteTable('user', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	username: text('username'),
+	name: text('name').notNull(),
+	email: text('email').notNull().unique(),
+	emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
+	image: text('image'),
+	role: text('role').notNull().default('user'),
+	password: text('password')
 });
 
 export const userRelations = relations(user, ({ many }) => ({
-  Projects: many(userProject),
-  createdByUser: many(issue, { relationName: "createdByUser" }),
-  assignedToUser: many(issue, { relationName: "assignedToUser" }),
+	Projects: many(userProject),
+	createdByUser: many(issue, { relationName: 'createdByUser' }),
+	assignedToUser: many(issue, { relationName: 'assignedToUser' })
 }));
 
 export const accounts = sqliteTable(
 	'account',
 	{
-	userId: text('userId')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	type: text('type').$type<AdapterAccount['type']>().notNull(),
-	provider: text('provider').notNull(),
-	providerAccountId: text('providerAccountId').notNull(),
-	refresh_token: text('refresh_token'),
-	access_token: text('access_token'),
-	expires_at: integer('expires_at'),
-	token_type: text('token_type'),
-	scope: text('scope'),
-	id_token: text('id_token'),
-	session_state: text('session_state')
+		userId: text('userId')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		type: text('type').$type<AdapterAccount['type']>().notNull(),
+		provider: text('provider').notNull(),
+		providerAccountId: text('providerAccountId').notNull(),
+		refresh_token: text('refresh_token'),
+		access_token: text('access_token'),
+		expires_at: integer('expires_at'),
+		token_type: text('token_type'),
+		scope: text('scope'),
+		id_token: text('id_token'),
+		session_state: text('session_state')
 	},
 	account => ({
-	compoundKey: primaryKey({
-		columns: [account.provider, account.providerAccountId]
-	})
+		compoundKey: primaryKey({
+			columns: [account.provider, account.providerAccountId]
+		})
 	})
 );
 
@@ -80,8 +80,7 @@ export const project = sqliteTable('Project', {
 	CreatedBy: text('created-by')
 		.references(() => user.id)
 		.notNull(),
-	CurrentSprint: integer('current_sprint')
-		.references(() => sprint.ID)
+	CurrentSprint: integer('current_sprint').references(() => sprint.ID)
 });
 
 export const projectRelations = relations(project, ({ one, many }) => ({
@@ -118,8 +117,7 @@ export const userProject = sqliteTable('UserProject', {
 		.notNull(),
 	Project: integer('project-id')
 		.references(() => project.ID)
-		.notNull(),
-	Role: text('role').notNull()
+		.notNull()
 });
 
 export const userProjectRelations = relations(userProject, ({ one }) => ({

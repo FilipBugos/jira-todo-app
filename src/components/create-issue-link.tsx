@@ -8,10 +8,10 @@ export const CreateIssueLink = async () => {
 	if (!loggedInUser) {
 		<div>Error</div>;
 	}
-	const allUserProject = await getAllUserProjects(loggedInUser?.id);
+	const allUserProject = await getAllUserProjects(loggedInUser.id);
 
 	const sprints = allUserProject.flatMap(p => p.project.Sprints);
-
+	console.log('All user projects', allUserProject);
 	return (
 		<div className="m-3">
 			<CreateIssueDialog

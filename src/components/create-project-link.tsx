@@ -9,6 +9,8 @@ export const CreateProjectLink = async () => {
 	}
 
 	const users = await getUser();
+	console.log('CreateProjectLink - users');
+	console.log(users);
 	return (
 		<div className="m-3">
 			<CreateProjectDialog
