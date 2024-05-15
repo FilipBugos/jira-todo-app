@@ -60,4 +60,18 @@ export const updateIssue = async (data: InsertIssue) => {
 	revalidatePath('/');
 };
 
+export const assignIssueToSprint = async (issueId: number, sprintId: number) => {
+  const issueEntity = await getIssue([eq(issue.ID, issueId)]);
+  const returned = await db
+    .update(issue)
+    .set({
+      ...issueEntity,
+      SprintID: sprintId
+    })
+    .where(eq(issue.ID, issueId))
+    .returning({ updatedId: issue.ID });
+  revalidatePath("/");
+};
+
+
 export type IssueJoined = Awaited<ReturnType<typeof getIssuesJoined>>[number];

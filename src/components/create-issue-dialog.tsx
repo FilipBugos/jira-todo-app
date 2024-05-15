@@ -94,7 +94,7 @@ const CreateIssueDialog = ({
 						CreatedTime: new Date(),
 						Label: issue.label,
 						Status: getStatuses().at(0)?.Name,
-						SprintID: issue.sprint,
+						...(issue.sprint && { SprintID: issue.sprint }),
 						...(issue.assignee && { AssignedTo: issue.assignee })
 					};
 
